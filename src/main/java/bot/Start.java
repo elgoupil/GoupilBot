@@ -11,7 +11,7 @@ public class Start {
         startBot();
     }
     public static void startBot(){
-        WrkJDA bot = new WrkJDA("Mjk0MDQxODI3MDIyMDc3OTU0.C7ST6A.a-OReMrMSAJbAyywINETDnAOi0U", "203616169519742977");
+        WrkJDA bot = new WrkJDA("", "203616169519742977");
         bot.start();
         
     }
