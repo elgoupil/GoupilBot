@@ -16,20 +16,12 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
  */
 public class WrkGame {
 
-    private JDA jda;
-    private Guild server;
-
-    public WrkGame(JDA jda, Guild server) {
-        this.jda = jda;
-        this.server = server;
-    }
-
-        public VoiceChannel createChannel(String name) {
+    public static VoiceChannel createChannel(String name, Guild server) {
         server.getController().createVoiceChannel(name).setBitrate(66666).complete();
         return server.getVoiceChannels().get(server.getVoiceChannels().size() - 1);
     }
 
-    public void checkGameChannel() {
+    public static void checkGameChannel(JDA jda, Guild server) {
         boolean isExist = true;
         for (Member member : server.getMembers()) {
             try {
@@ -38,7 +30,7 @@ public class WrkGame {
                     if (gameName != null) {
                         for (VoiceChannel voiceChannel : server.getVoiceChannels()) {
                             if (voiceChannel.getName().equals(gameName) && voiceChannel.getBitrate() == 66666) {
-                                moveChannel(member, voiceChannel);
+                                moveChannel(member, voiceChannel, server);
                                 isExist = true;
                                 break;
                             } else {
@@ -46,7 +38,7 @@ public class WrkGame {
                             }
                         }
                         if (!isExist) {
-                            moveChannel(member, createChannel(gameName));
+                            moveChannel(member, createChannel(gameName, server), server);
                         }
                     }
                 }
@@ -55,14 +47,14 @@ public class WrkGame {
         }
     }
 
-    public void moveChannel(Member member, VoiceChannel channel) {
+    public static void moveChannel(Member member, VoiceChannel channel, Guild server) {
 //        while (server.getMemberById(member.getUser().getId()).getVoiceState().getChannel() != channel) {  
 //            System.out.println("Boucle");
         server.getController().moveVoiceMember(member, channel).complete();
 //        }
     }
 
-    public void checkChannelCreated() {
+    public static void checkChannelCreated(Guild server) {
         for (VoiceChannel voiceChannel : server.getVoiceChannels()) {
             if (voiceChannel.getBitrate() == 66666) {
                 if (voiceChannel.getMembers().isEmpty()) {

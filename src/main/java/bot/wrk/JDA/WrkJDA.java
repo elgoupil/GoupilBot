@@ -28,8 +28,6 @@ public class WrkJDA extends Thread implements EventListener{
     private Guild server;
     private TextChannel textChannel;
     private VoiceChannel voiceChannel;
-    private WrkEvent wrkEvent;
-    private WrkGame wrkGame;
 
     public WrkJDA(String token, String owner_id) {
         try {
@@ -41,19 +39,17 @@ public class WrkJDA extends Thread implements EventListener{
         owner = jda.getUserById(owner_id);
         jda.addEventListener(this);
         server = jda.getGuildById("215873323857477632");
-        wrkEvent = new WrkEvent(jda);
-        wrkGame = new WrkGame(jda, server);
-        wrkGame.checkChannelCreated();
-        wrkGame.checkGameChannel();
+        WrkGame.checkChannelCreated(server);
+        WrkGame.checkGameChannel(jda, server);
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                wrkGame.checkGameChannel();
+                WrkGame.checkGameChannel(jda, server);
                 WrkJDA.sleep(500);
-                wrkGame.checkChannelCreated();
+                WrkGame.checkChannelCreated(server);
             } catch (InterruptedException ex) {
             }
         }
@@ -61,7 +57,7 @@ public class WrkJDA extends Thread implements EventListener{
 
     @Override
     public void onEvent(Event event) {
-        wrkEvent.eventWrk(event);
+        WrkEvent.eventWrk(event, jda);
     }
     
 }
