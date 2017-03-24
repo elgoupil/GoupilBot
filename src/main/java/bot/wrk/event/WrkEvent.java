@@ -16,13 +16,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
  */
 public class WrkEvent {
 
-    private JDA jda;
-
-    public WrkEvent(JDA jda) {
-        this.jda = jda;
-    }
-
-    public void eventWrk(Event event) {
+    public static void eventWrk(Event event, JDA jda) {
         if (event instanceof MessageReceivedEvent) {
             if (((MessageReceivedEvent) event).getTextChannel().getId().equals("294142499138568192")) {
                 if (((MessageReceivedEvent) event).getAuthor() != jda.getSelfUser()) {

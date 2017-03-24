@@ -14,7 +14,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
  *
  * @author Goupil
  */
-public class WrkGame {
+public class Game {
 
     public static VoiceChannel createChannel(String name, Guild server) {
         server.getController().createVoiceChannel(name).setBitrate(66666).complete();

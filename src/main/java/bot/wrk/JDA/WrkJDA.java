@@ -6,7 +6,7 @@
 package bot.wrk.JDA;
 
 import bot.wrk.event.WrkEvent;
-import bot.wrk.game.WrkGame;
+import bot.wrk.game.Game;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -39,17 +39,17 @@ public class WrkJDA extends Thread implements EventListener{
         owner = jda.getUserById(owner_id);
         jda.addEventListener(this);
         server = jda.getGuildById("215873323857477632");
-        WrkGame.checkChannelCreated(server);
-        WrkGame.checkGameChannel(jda, server);
+        Game.checkChannelCreated(server);
+        Game.checkGameChannel(jda, server);
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                WrkGame.checkGameChannel(jda, server);
+                Game.checkGameChannel(jda, server);
                 WrkJDA.sleep(500);
-                WrkGame.checkChannelCreated(server);
+                Game.checkChannelCreated(server);
             } catch (InterruptedException ex) {
             }
         }
