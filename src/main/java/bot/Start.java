@@ -13,7 +13,6 @@ public class Start {
     public static void startBot(){
         WrkJDA bot = new WrkJDA("", "203616169519742977");
         bot.start();
-        
     }
     
 }

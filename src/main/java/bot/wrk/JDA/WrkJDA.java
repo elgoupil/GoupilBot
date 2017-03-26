@@ -7,6 +7,7 @@ package bot.wrk.JDA;
 
 import bot.wrk.event.WrkEvent;
 import bot.wrk.game.Game;
+import bot.wrk.music.Music;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -21,13 +22,14 @@ import net.dv8tion.jda.core.hooks.EventListener;
  *
  * @author Goupil
  */
-public class WrkJDA extends Thread implements EventListener{
-    
+public class WrkJDA extends Thread implements EventListener {
+
     private JDA jda;
     private final User owner;
     private Guild server;
     private TextChannel textChannel;
     private VoiceChannel voiceChannel;
+    private Music musicbot;
 
     public WrkJDA(String token, String owner_id) {
         try {
@@ -39,10 +41,17 @@ public class WrkJDA extends Thread implements EventListener{
         owner = jda.getUserById(owner_id);
         jda.addEventListener(this);
         server = jda.getGuildById("215873323857477632");
+        textChannel = server.getTextChannelById("294142499138568192");
+        musicbot = new Music(textChannel, jda);
+
         Game.checkChannelCreated(server);
         Game.checkGameChannel(jda, server);
     }
 
+    public JDA getJda() {
+        return jda;
+    }
+    
     @Override
     public void run() {
         while (true) {
@@ -57,7 +66,7 @@ public class WrkJDA extends Thread implements EventListener{
 
     @Override
     public void onEvent(Event event) {
-        WrkEvent.eventWrk(event, jda);
+        WrkEvent.eventWrk(event, jda, musicbot);
     }
-    
+
 }
