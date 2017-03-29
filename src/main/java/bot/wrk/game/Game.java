@@ -21,11 +21,11 @@ public class Game {
         return server.getVoiceChannels().get(server.getVoiceChannels().size() - 1);
     }
 
-    public static void checkGameChannel(JDA jda, Guild server) {
+    public static void checkGameChannel(JDA jda, Guild server, VoiceChannel channel) {
         boolean isExist = true;
         for (Member member : server.getMembers()) {
             try {
-                if (member.getVoiceState().getChannel().equals(jda.getVoiceChannelById("294226631654899712"))) {
+                if (member.getVoiceState().getChannel().equals(channel)) {
                     String gameName = member.getGame().getName();
                     if (gameName != null) {
                         for (VoiceChannel voiceChannel : server.getVoiceChannels()) {

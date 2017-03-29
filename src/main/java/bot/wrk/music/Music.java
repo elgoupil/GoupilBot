@@ -77,11 +77,15 @@ public class Music {
                 if (channel.getGuild().getAudioManager().isConnected()) {
                     AudioTrack firstTrack = playlist.getSelectedTrack();
                     if (firstTrack == null) {
-                        for (AudioTrack track : playlist.getTracks()) {
-                            play(channel, musicManager, track, user);
+                        if (trackUrl.contains("ytsearch:")) {
+                            channel.sendMessage("YT search not implemented yet ;)").queue();
+                        } else {
+                            for (AudioTrack track : playlist.getTracks()) {
+                                play(channel, musicManager, track, user);
+                            }
+                            channel.sendMessage("Adding to queue playlist " + playlist.getName() + " with " + playlist.getTracks().size() + " songs").queue();
                         }
                     }
-                    channel.sendMessage("Adding to queue playlist " + playlist.getName() + " with " + playlist.getTracks().size() + " songs").queue();
                 } else {
                     channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
                 }
@@ -184,10 +188,18 @@ public class Music {
 
     }
 
-    public static void connectToVoiceChannel(AudioManager audioManager, Member user) {
+    public static void connectToVoiceChannel(AudioManager audioManager, Member user, TextChannel channel) {
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()) {
             if (user.getVoiceState().inVoiceChannel()) {
                 audioManager.openAudioConnection(user.getVoiceState().getChannel());
+            }else{
+                channel.sendMessage(user.getAsMention()+" Master where are you! :scream:").queue();
+            }
+        }else{
+            if (user.getVoiceState().inVoiceChannel()) {
+                audioManager.openAudioConnection(user.getVoiceState().getChannel());
+            }else{
+                channel.sendMessage(user.getAsMention()+" Master where are you! :scream:").queue();
             }
         }
     }

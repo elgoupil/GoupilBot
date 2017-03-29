@@ -31,21 +31,22 @@ public class WrkJDA extends Thread implements EventListener {
     private VoiceChannel voiceChannel;
     private Music musicbot;
 
-    public WrkJDA(String token, String owner_id) {
+    public WrkJDA(String token, String ownerId, String serverId, String textChannelId, String voiceChannelId, String prefix) {
         try {
             jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
             jda.setAutoReconnect(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        owner = jda.getUserById(owner_id);
+        owner = jda.getUserById(ownerId);
         jda.addEventListener(this);
         server = jda.getGuildById("215873323857477632");
         textChannel = server.getTextChannelById("294142499138568192");
+        voiceChannel = server.getVoiceChannelById("294226631654899712");
         musicbot = new Music(textChannel, jda);
 
         Game.checkChannelCreated(server);
-        Game.checkGameChannel(jda, server);
+        Game.checkGameChannel(jda, server, voiceChannel);
     }
 
     public JDA getJda() {
@@ -56,7 +57,7 @@ public class WrkJDA extends Thread implements EventListener {
     public void run() {
         while (true) {
             try {
-                Game.checkGameChannel(jda, server);
+                Game.checkGameChannel(jda, server, voiceChannel);
                 WrkJDA.sleep(500);
                 Game.checkChannelCreated(server);
             } catch (InterruptedException ex) {
@@ -66,7 +67,7 @@ public class WrkJDA extends Thread implements EventListener {
 
     @Override
     public void onEvent(Event event) {
-        WrkEvent.eventWrk(event, jda, musicbot);
+        WrkEvent.eventWrk(event, jda, musicbot, textChannel);
     }
 
 }

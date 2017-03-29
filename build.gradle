@@ -19,4 +19,12 @@ dependencies {
     compile 'com.sedmelluq:lavaplayer:1.2.34'
 }
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.simpleframework', name: 'simple-xml', version: '2.7.1'
+}
+
 compileJava.options.encoding = 'UTF-8'
