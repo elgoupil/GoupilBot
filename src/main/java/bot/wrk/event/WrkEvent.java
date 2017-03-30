@@ -18,7 +18,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
  */
 public class WrkEvent {
 
-    public static void eventWrk(Event event, JDA jda, Music musicbot, TextChannel channel) {
+    public static void eventWrk(Event event, JDA jda, Music musicbot, TextChannel channel, String prefix) {
         if (event instanceof MessageReceivedEvent) {
             if (((MessageReceivedEvent) event).getTextChannel().equals(channel)) {
                 if (((MessageReceivedEvent) event).getAuthor() != jda.getSelfUser()) {
@@ -69,7 +69,7 @@ public class WrkEvent {
                     if ("restart".equalsIgnoreCase(command[0])) {
                         ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Restarting... :hourglass_flowing_sand::hourglass:").complete();
                         jda.shutdown(false);
-//                        Start.startBot();
+                        Start.startBot();
                     }
                     if (("shutdown".equalsIgnoreCase(command[0]) || "sd".equalsIgnoreCase(command[0]))) {
                         ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " :regional_indicator_k::o2:\t:dizzy_face::gun: ").complete();

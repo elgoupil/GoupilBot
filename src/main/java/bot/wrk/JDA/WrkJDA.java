@@ -30,6 +30,7 @@ public class WrkJDA extends Thread implements EventListener {
     private TextChannel textChannel;
     private VoiceChannel voiceChannel;
     private Music musicbot;
+    private String prefix;
 
     public WrkJDA(String token, String ownerId, String serverId, String textChannelId, String voiceChannelId, String prefix) {
         try {
@@ -40,9 +41,9 @@ public class WrkJDA extends Thread implements EventListener {
         }
         owner = jda.getUserById(ownerId);
         jda.addEventListener(this);
-        server = jda.getGuildById("215873323857477632");
-        textChannel = server.getTextChannelById("294142499138568192");
-        voiceChannel = server.getVoiceChannelById("294226631654899712");
+        server = jda.getGuildById(serverId);
+        textChannel = server.getTextChannelById(textChannelId);
+        voiceChannel = server.getVoiceChannelById(voiceChannelId);
         musicbot = new Music(textChannel, jda);
 
         Game.checkChannelCreated(server);
@@ -67,7 +68,7 @@ public class WrkJDA extends Thread implements EventListener {
 
     @Override
     public void onEvent(Event event) {
-        WrkEvent.eventWrk(event, jda, musicbot, textChannel);
+        WrkEvent.eventWrk(event, jda, musicbot, textChannel, prefix);
     }
 
 }
