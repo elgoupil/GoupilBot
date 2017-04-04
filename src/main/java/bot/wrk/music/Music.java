@@ -28,6 +28,7 @@ public class Music {
 
     private final AudioPlayerManager playerManager;
     private final HashMap<Long, GuildMusicManager> musicManagers;
+    private NowPlaying nowPlaying;
     private JDA jda;
 
     /**
@@ -40,7 +41,7 @@ public class Music {
         this.playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
-        NowPlaying nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()));
+        nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()));
     }
 
     public synchronized GuildMusicManager getGuildAudioPlayer(Guild guild) {
@@ -186,6 +187,18 @@ public class Music {
             channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
         }
 
+    }
+    
+    public void stopMusic(){
+        
+    }
+    
+    public void pauseMusic(){
+        
+    }
+    
+    public void showNowPlaying(){
+        nowPlaying.showNowPlaying();
     }
 
     public static void connectToVoiceChannel(AudioManager audioManager, Member user, TextChannel channel) {

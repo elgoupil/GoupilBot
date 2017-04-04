@@ -59,12 +59,17 @@ public class WrkEvent {
                     if ("queue".equalsIgnoreCase(command[0])) {
                         musicbot.showQueue(((MessageReceivedEvent) event).getTextChannel());
                     }
+                    if ("nowplaying".equalsIgnoreCase(command[0]) || "np".equalsIgnoreCase(command[0])) {
+                        musicbot.showNowPlaying();
+                    }
                     if ("summon".equalsIgnoreCase(command[0])) {
                         musicbot.connectToVoiceChannel(((MessageReceivedEvent) event).getGuild().getAudioManager(), ((MessageReceivedEvent) event).getMember(), ((MessageReceivedEvent) event).getTextChannel());
                         musicbot.changeVolume("15", ((MessageReceivedEvent) event).getTextChannel());
                     }
                     if ("help".equalsIgnoreCase(command[0])) {
-                        ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Dat Help\n Ok :ok_hand:").queue();
+                        String msg = " Dat Help\n"
+                                + "Ok :ok_hand:";
+                        ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + msg).queue();
                     }
                     if ("restart".equalsIgnoreCase(command[0])) {
                         ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Restarting... :hourglass_flowing_sand::hourglass:").complete();
