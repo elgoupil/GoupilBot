@@ -7,15 +7,12 @@ package bot.wrk.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.EventListener;
-import net.dv8tion.jda.core.requests.RestAction;
 
 /**
  *
@@ -75,7 +72,9 @@ public class NowPlaying implements EventListener {
     }
 
     public void sendNowPaused() {
+        channel.getManager().setTopic("").queue();
         channel.deleteMessageById(idMessageNowPlaying).complete();
+        
         idMessageNowPlaying = "";
 
         currentTrack = musicManager.player.getPlayingTrack();
@@ -102,6 +101,7 @@ public class NowPlaying implements EventListener {
             if (currentTrack != null) {
                 try {
                     if (!oldTrack.getIdentifier().equals(currentTrack.getIdentifier())) {
+                        channel.getManager().setTopic("").queue();
                         channel.deleteMessageById(idMessageNowPlaying).complete();
                         idMessageNowPlaying = "";
                         sendNowPlaying();
@@ -111,7 +111,6 @@ public class NowPlaying implements EventListener {
                         String title = currentTrack.getInfo().title;
                         String position = getTimestamp(currentTrack.getPosition());
                         String duration = getTimestamp(currentTrack.getDuration());
-                        String state;
                         String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
                         channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
                     }
@@ -127,6 +126,7 @@ public class NowPlaying implements EventListener {
     public void stopNowPlaying() {
         if (npThread.isAlive()) {
             if (!idMessageNowPlaying.isEmpty()) {
+                channel.getManager().setTopic("").queue();
                 channel.deleteMessageById(idMessageNowPlaying).complete();
                 idMessageNowPlaying = "";
             }
@@ -163,6 +163,7 @@ public class NowPlaying implements EventListener {
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))) {
                             if (musicManager.player.isPaused()) {
                                 music.pauseMusic(false);
+                                channel.getManager().setTopic("").queue();
                                 channel.deleteMessageById(idMessageNowPlaying).complete();
                                 idMessageNowPlaying = "";
                                 sendNowPlaying();
@@ -176,6 +177,7 @@ public class NowPlaying implements EventListener {
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
                             music.skipTrack(false);
+                            
                         }
                     } else {
                     }
