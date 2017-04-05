@@ -6,17 +6,16 @@
 package bot.wrk.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.EventListener;
+import net.dv8tion.jda.core.requests.RestAction;
 
 /**
  *
@@ -27,61 +26,113 @@ public class NowPlaying implements EventListener {
     private TextChannel channel;
     private GuildMusicManager musicManager;
     private JDA jda;
+    private Music music;
     private String idMessageNowPlaying;
     private NowPlayingThread npThread;
+    private AudioTrack currentTrack;
+    private AudioTrack oldTrack;
 
-    public NowPlaying(TextChannel channel, GuildMusicManager musicManager, JDA jda) {
+    public NowPlaying(TextChannel channel, GuildMusicManager musicManager, JDA jda, Music music) {
         this.channel = channel;
         this.musicManager = musicManager;
         this.jda = jda;
+        this.music = music;
+
         idMessageNowPlaying = "";
+        npThread = new NowPlayingThread(this);
     }
 
     public void showNowPlaying() {
-        AudioTrack currentTrack = musicManager.player.getPlayingTrack();
+        currentTrack = musicManager.player.getPlayingTrack();
         if (currentTrack != null) {
-            sendNowPlaying();
-            npThread = new NowPlayingThread(this);
-            npThread.start();
+            if (!npThread.npIsWorking()) {
+                sendNowPlaying();
+                npThread = new NowPlayingThread(this);
+                npThread.start();
+            }
         } else {
             channel.sendMessage("The player is not currently playing anything!").queue();
         }
     }
 
     public void sendNowPlaying() {
-        AudioTrack currentTrack = musicManager.player.getPlayingTrack();
+        currentTrack = musicManager.player.getPlayingTrack();
 
         String title = currentTrack.getInfo().title;
         String position = getTimestamp(currentTrack.getPosition());
         String duration = getTimestamp(currentTrack.getDuration());
 
         String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
+        channel.getManager().setTopic("**Playing:** " + title).queue();
         Message theMessage = channel.sendMessage(msg).complete();
         idMessageNowPlaying = theMessage.getId();
-        channel.addReactionById(idMessageNowPlaying, "⏯").queue();
-        channel.addReactionById(idMessageNowPlaying, "⏹").queue();
-        channel.addReactionById(idMessageNowPlaying, "⏭").queue();
+        try {
+            channel.addReactionById(idMessageNowPlaying, "⏯").complete(true);
+            channel.addReactionById(idMessageNowPlaying, "⏹").complete(true);
+            channel.addReactionById(idMessageNowPlaying, "⏭").submit();
+        } catch (Exception e) {
+        }
+    }
+
+    public void sendNowPaused() {
+        channel.deleteMessageById(idMessageNowPlaying).complete();
+        idMessageNowPlaying = "";
+
+        currentTrack = musicManager.player.getPlayingTrack();
+
+        String title = currentTrack.getInfo().title;
+        String position = getTimestamp(currentTrack.getPosition());
+        String duration = getTimestamp(currentTrack.getDuration());
+
+        String msg = String.format("**Paused:** %s\n**Time:** [%s / %s]", title, position, duration);
+        channel.getManager().setTopic("**Paused:** " + title).queue();
+        Message theMessage = channel.sendMessage(msg).complete();
+        idMessageNowPlaying = theMessage.getId();
+        try {
+            channel.addReactionById(idMessageNowPlaying, "⏯").complete(true);
+            channel.addReactionById(idMessageNowPlaying, "⏹").complete(true);
+            channel.addReactionById(idMessageNowPlaying, "⏭").submit();
+        } catch (Exception e) {
+        }
     }
 
     public void updateNowPlaying() {
-        AudioTrack currentTrack = musicManager.player.getPlayingTrack();
-        if (currentTrack != null) {
-            String title = currentTrack.getInfo().title;
-            String position = getTimestamp(currentTrack.getPosition());
-            String duration = getTimestamp(currentTrack.getDuration());
-
-            String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
-            channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
-        } else {
-            stopNowPlaying();
+        if (!musicManager.player.isPaused()) {
+            currentTrack = musicManager.player.getPlayingTrack();
+            if (currentTrack != null) {
+                try {
+                    if (!oldTrack.getIdentifier().equals(currentTrack.getIdentifier())) {
+                        channel.deleteMessageById(idMessageNowPlaying).complete();
+                        idMessageNowPlaying = "";
+                        sendNowPlaying();
+                        oldTrack = currentTrack;
+                    } else {
+                        oldTrack = currentTrack;
+                        String title = currentTrack.getInfo().title;
+                        String position = getTimestamp(currentTrack.getPosition());
+                        String duration = getTimestamp(currentTrack.getDuration());
+                        String state;
+                        String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
+                        channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
+                    }
+                } catch (Exception e) {
+                    oldTrack = currentTrack;
+                }
+            } else {
+                stopNowPlaying();
+            }
         }
     }
 
     public void stopNowPlaying() {
         if (npThread.isAlive()) {
-            channel.deleteMessageById(idMessageNowPlaying).complete();
-            idMessageNowPlaying = "";
-            npThread.interrupt();
+            if (!idMessageNowPlaying.isEmpty()) {
+                channel.deleteMessageById(idMessageNowPlaying).complete();
+                idMessageNowPlaying = "";
+            }
+            if (npThread.isAlive()) {
+                npThread.npStop();
+            }
         }
     }
 
@@ -99,11 +150,37 @@ public class NowPlaying implements EventListener {
 
     @Override
     public void onEvent(Event event) {
-        if (event instanceof GenericMessageReactionEvent) {
-            if (!((GenericMessageReactionEvent) event).getUser().equals(jda.getSelfUser())) {
-
+        ArrayList<String> reactions = new ArrayList<>();
+        reactions.add("⏯");
+        reactions.add("⏹");
+        reactions.add("⏭");
+        if (event instanceof MessageReactionAddEvent) {
+            if (!((MessageReactionAddEvent) event).getUser().equals(jda.getSelfUser())) {
+                if (!idMessageNowPlaying.isEmpty() && ((MessageReactionAddEvent) event).getMessageId().equals(idMessageNowPlaying)) {
+                    if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))
+                            || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(1))
+                            || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
+                        if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))) {
+                            if (musicManager.player.isPaused()) {
+                                music.pauseMusic(false);
+                                channel.deleteMessageById(idMessageNowPlaying).complete();
+                                idMessageNowPlaying = "";
+                                sendNowPlaying();
+                            } else {
+                                sendNowPaused();
+                                music.pauseMusic(false);
+                            }
+                        }
+                        if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(1))) {
+                            music.stopMusic(false);
+                        }
+                        if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
+                            music.skipTrack(false);
+                        }
+                    } else {
+                    }
+                }
             }
         }
     }
-
 }

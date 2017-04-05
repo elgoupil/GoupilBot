@@ -25,46 +25,52 @@ public class WrkEvent {
                     String[] command = ((MessageReceivedEvent) event).getMessage().getContent().split(" ", 2);
                     if ("play".equalsIgnoreCase(command[0])) {
                         if (command.length == 2) {
-                            musicbot.loadAndPlay(((MessageReceivedEvent) event).getTextChannel(), command[1], ((MessageReceivedEvent) event).getMember());
+                            musicbot.loadAndPlay(command[1], ((MessageReceivedEvent) event).getMember());
                         } else {
                             ((MessageReceivedEvent) event).getChannel().sendMessage("Usage : `play 'url'` or `search 'name of the video on YT'`").queue();
                         }
                     }
                     if ("search".equalsIgnoreCase(command[0])) {
                         if (command.length == 2) {
-                            musicbot.loadAndPlay(((MessageReceivedEvent) event).getTextChannel(), ("ytsearch:"+command[1]), ((MessageReceivedEvent) event).getMember());
+                            musicbot.loadAndPlay(("ytsearch:"+command[1]), ((MessageReceivedEvent) event).getMember());
                         } else {
                             ((MessageReceivedEvent) event).getChannel().sendMessage("Usage : `play 'url'` or `search 'name of the video on YT'`").queue();
                         }
                     }
                     if ("skip".equalsIgnoreCase(command[0])) {
-                        musicbot.skipTrack(((MessageReceivedEvent) event).getTextChannel());
+                        musicbot.skipTrack(true);
                     }
                     if ("volume".equalsIgnoreCase(command[0])) {
                         if (command.length == 2) {
-                            musicbot.changeVolume(command[1], ((MessageReceivedEvent) event).getTextChannel());
+                            musicbot.changeVolume(command[1], true);
                         } else {
                             ((MessageReceivedEvent) event).getChannel().sendMessage("Usage : `volume 1 - 150`").queue();
                         }
                     }
                     if ("disconnect".equalsIgnoreCase(command[0])) {
-                        musicbot.disconnectChannel(((MessageReceivedEvent) event).getTextChannel());
+                        musicbot.disconnectChannel();
                     }
                     if ("clear".equalsIgnoreCase(command[0])) {
-                        musicbot.clearQueue(((MessageReceivedEvent) event).getTextChannel());
+                        musicbot.clearQueue();
                     }
                     if ("shuffle".equalsIgnoreCase(command[0])) {
-                        musicbot.shuffleQueue(((MessageReceivedEvent) event).getTextChannel());
+                        musicbot.shuffleQueue();
                     }
                     if ("queue".equalsIgnoreCase(command[0])) {
-                        musicbot.showQueue(((MessageReceivedEvent) event).getTextChannel());
+                        musicbot.showQueue();
                     }
                     if ("nowplaying".equalsIgnoreCase(command[0]) || "np".equalsIgnoreCase(command[0])) {
                         musicbot.showNowPlaying();
                     }
+                    if ("stop".equalsIgnoreCase(command[0])) {
+                        musicbot.stopMusic(true);
+                    }
+                    if ("pause".equalsIgnoreCase(command[0])) {
+                        musicbot.pauseMusic(true);
+                    }
                     if ("summon".equalsIgnoreCase(command[0])) {
                         musicbot.connectToVoiceChannel(((MessageReceivedEvent) event).getGuild().getAudioManager(), ((MessageReceivedEvent) event).getMember(), ((MessageReceivedEvent) event).getTextChannel());
-                        musicbot.changeVolume("15", ((MessageReceivedEvent) event).getTextChannel());
+                        musicbot.changeVolume("15", false);
                     }
                     if ("help".equalsIgnoreCase(command[0])) {
                         String msg = " Dat Help\n"

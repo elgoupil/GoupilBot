@@ -30,6 +30,7 @@ public class Music {
     private final HashMap<Long, GuildMusicManager> musicManagers;
     private NowPlaying nowPlaying;
     private JDA jda;
+    private TextChannel channel;
 
     /**
      *
@@ -37,11 +38,11 @@ public class Music {
      */
     public Music(TextChannel channel, JDA jda) {
         this.musicManagers = new HashMap<>();
-
+        this.channel = channel;
         this.playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
-        nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()), jda);
+        nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()), jda, this);
     }
 
     public synchronized GuildMusicManager getGuildAudioPlayer(Guild guild) {
@@ -57,12 +58,12 @@ public class Music {
 
         return musicManager;
     }
-    
-    public NowPlaying getNowPlaying(){
+
+    public NowPlaying getNowPlaying() {
         return nowPlaying;
     }
 
-    public void loadAndPlay(final TextChannel channel, final String trackUrl, Member user) {
+    public void loadAndPlay(final String trackUrl, Member user) {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
 
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
@@ -70,7 +71,7 @@ public class Music {
             public void trackLoaded(AudioTrack track) {
                 if (channel.getGuild().getAudioManager().isConnected()) {
                     channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
-                    play(channel, musicManager, track, user);
+                    play(musicManager, track, user);
                 } else {
                     channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
                 }
@@ -86,7 +87,7 @@ public class Music {
                             channel.sendMessage("YT search not implemented yet ;)").queue();
                         } else {
                             for (AudioTrack track : playlist.getTracks()) {
-                                play(channel, musicManager, track, user);
+                                play(musicManager, track, user);
                             }
                             channel.sendMessage("Adding to queue playlist " + playlist.getName() + " with " + playlist.getTracks().size() + " songs").queue();
                         }
@@ -108,26 +109,31 @@ public class Music {
         });
     }
 
-    public void play(TextChannel channel, GuildMusicManager musicManager, AudioTrack track, Member user) {
+    public void play(GuildMusicManager musicManager, AudioTrack track, Member user) {
         musicManager.scheduler.queue(track);
     }
 
-    public void skipTrack(TextChannel channel) {
+    public void skipTrack(boolean withMsg) {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
         musicManager.scheduler.nextTrack();
-
-        channel.sendMessage("Skipped the current track.").queue();
+        if (withMsg) {
+            channel.sendMessage("Skipped the current track.").queue();
+        }
     }
 
-    public void changeVolume(String volume, TextChannel channel) {
+    public void changeVolume(String volume, boolean withMsg) {
         if ((channel.getGuild().getAudioManager().isConnected()) || (channel.getGuild().getAudioManager().isAttemptingToConnect())) {
             GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
             try {
-                boolean isOk = musicManager.scheduler.changeVolume(Integer.parseInt(volume));
-                if (!isOk) {
-                    channel.sendMessage("Volume must be between 1 - 100").queue();
+                if (withMsg) {
+                    boolean isOk = musicManager.scheduler.changeVolume(Integer.parseInt(volume));
+                    if (!isOk) {
+                        channel.sendMessage("Volume must be between 1 - 100").queue();
+                    } else {
+                        channel.sendMessage("Volume is now " + musicManager.scheduler.getVolume()).queue();
+                    }
                 } else {
-                    channel.sendMessage("Volume is now " + musicManager.scheduler.getVolume()).queue();
+                    musicManager.scheduler.changeVolume(Integer.parseInt(volume));
                 }
             } catch (NumberFormatException e) {
                 channel.sendMessage("Volume must be in number!").queue();
@@ -137,10 +143,11 @@ public class Music {
         }
     }
 
-    public void disconnectChannel(TextChannel channel) {
+    public void disconnectChannel() {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
         AudioManager audioManager = channel.getGuild().getAudioManager();
         if (audioManager.isConnected()) {
+            nowPlaying.stopNowPlaying();
             musicManager.player.destroy();
             audioManager.closeAudioConnection();
             musicManager.scheduler.clearQueue();
@@ -150,7 +157,7 @@ public class Music {
         }
     }
 
-    public void clearQueue(TextChannel channel) {
+    public void clearQueue() {
         if (getGuildAudioPlayer(channel.getGuild()).scheduler.clearQueue()) {
             channel.sendMessage("Successfully cleared the queue!").queue();
         } else {
@@ -158,7 +165,7 @@ public class Music {
         }
     }
 
-    public void shuffleQueue(TextChannel channel) {
+    public void shuffleQueue() {
         if (channel.getGuild().getAudioManager().isConnected()) {
             getGuildAudioPlayer(channel.getGuild()).scheduler.shuffleQueue();
             channel.sendMessage("Successfully shuffled the track!").queue();
@@ -167,7 +174,7 @@ public class Music {
         }
     }
 
-    public void showQueue(TextChannel channel) {
+    public void showQueue() {
         if (channel.getGuild().getAudioManager().isConnected()) {
             GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
             if (!musicManager.scheduler.getQueue().isEmpty()) {
@@ -192,16 +199,41 @@ public class Music {
         }
 
     }
-    
-    public void stopMusic(){
-        
+
+    public void stopMusic(boolean withMsg) {
+        GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
+        AudioManager audioManager = channel.getGuild().getAudioManager();
+        if (audioManager.isConnected()) {
+            nowPlaying.stopNowPlaying();
+            musicManager.player.destroy();
+            musicManager.scheduler.clearQueue();
+            if (withMsg) {
+                channel.sendMessage("Bye :kissing_heart:").queue();
+            }
+        } else {
+            if (withMsg) {
+                channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
+            }
+        }
     }
-    
-    public void pauseMusic(){
-        
+
+    public void pauseMusic(boolean withMsg) {
+        GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
+        AudioManager audioManager = channel.getGuild().getAudioManager();
+        if (!musicManager.player.isPaused()) {
+            musicManager.player.setPaused(true);
+            if (withMsg) {
+                channel.sendMessage("Paused").queue();
+            }
+        } else {
+            musicManager.player.setPaused(false);
+            if (withMsg) {
+                channel.sendMessage("Playing").queue();
+            }
+        }
     }
-    
-    public void showNowPlaying(){
+
+    public void showNowPlaying() {
         nowPlaying.showNowPlaying();
     }
 
@@ -209,14 +241,14 @@ public class Music {
         if (!audioManager.isConnected() && !audioManager.isAttemptingToConnect()) {
             if (user.getVoiceState().inVoiceChannel()) {
                 audioManager.openAudioConnection(user.getVoiceState().getChannel());
-            }else{
-                channel.sendMessage(user.getAsMention()+" Master where are you! :scream:").queue();
+            } else {
+                channel.sendMessage(user.getAsMention() + " Master where are you! :scream:").queue();
             }
-        }else{
+        } else {
             if (user.getVoiceState().inVoiceChannel()) {
                 audioManager.openAudioConnection(user.getVoiceState().getChannel());
-            }else{
-                channel.sendMessage(user.getAsMention()+" Master where are you! :scream:").queue();
+            } else {
+                channel.sendMessage(user.getAsMention() + " Master where are you! :scream:").queue();
             }
         }
     }
