@@ -41,7 +41,7 @@ public class Music {
         this.playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
-        nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()));
+        nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()), jda);
     }
 
     public synchronized GuildMusicManager getGuildAudioPlayer(Guild guild) {
@@ -56,6 +56,10 @@ public class Music {
         guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
 
         return musicManager;
+    }
+    
+    public NowPlaying getNowPlaying(){
+        return nowPlaying;
     }
 
     public void loadAndPlay(final TextChannel channel, final String trackUrl, Member user) {

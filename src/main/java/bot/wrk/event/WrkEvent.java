@@ -73,11 +73,13 @@ public class WrkEvent {
                     }
                     if ("restart".equalsIgnoreCase(command[0])) {
                         ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Restarting... :hourglass_flowing_sand::hourglass:").complete();
+                        musicbot.getNowPlaying().stopNowPlaying();
                         jda.shutdown(false);
                         Start.startBot();
                     }
                     if (("shutdown".equalsIgnoreCase(command[0]) || "sd".equalsIgnoreCase(command[0]))) {
                         ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " :regional_indicator_k::o2:\t:dizzy_face::gun: ").complete();
+                        musicbot.getNowPlaying().stopNowPlaying();
                         jda.shutdown(true);
                         System.exit(0);
                     }
