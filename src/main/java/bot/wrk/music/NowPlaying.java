@@ -183,7 +183,6 @@ public class NowPlaying implements EventListener, AudioEventListener {
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
                             music.skipTrack(false);
-
                         }
                     } else {
                     }

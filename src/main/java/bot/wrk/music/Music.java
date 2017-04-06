@@ -84,6 +84,7 @@ public class Music {
                     AudioTrack firstTrack = playlist.getSelectedTrack();
                     if (firstTrack == null) {
                         if (trackUrl.contains("ytsearch:")) {
+                            
                             channel.sendMessage("YT search not implemented yet ;)").queue();
                         } else {
                             for (AudioTrack track : playlist.getTracks()) {
