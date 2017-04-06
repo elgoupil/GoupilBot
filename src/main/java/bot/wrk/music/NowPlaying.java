@@ -5,6 +5,9 @@
  */
 package bot.wrk.music;
 
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEvent;
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
+import com.sedmelluq.discord.lavaplayer.player.event.TrackStartEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.ArrayList;
 import net.dv8tion.jda.core.JDA;
@@ -18,7 +21,7 @@ import net.dv8tion.jda.core.hooks.EventListener;
  *
  * @author Goupil
  */
-public class NowPlaying implements EventListener {
+public class NowPlaying implements EventListener, AudioEventListener {
 
     private TextChannel channel;
     private GuildMusicManager musicManager;
@@ -44,6 +47,7 @@ public class NowPlaying implements EventListener {
         if (currentTrack != null) {
             if (!npThread.npIsWorking()) {
                 sendNowPlaying();
+                musicManager.player.addListener(this);
                 npThread = new NowPlayingThread(this);
                 npThread.start();
             }
@@ -74,7 +78,7 @@ public class NowPlaying implements EventListener {
     public void sendNowPaused() {
         channel.getManager().setTopic("").queue();
         channel.deleteMessageById(idMessageNowPlaying).complete();
-        
+
         idMessageNowPlaying = "";
 
         currentTrack = musicManager.player.getPlayingTrack();
@@ -100,20 +104,21 @@ public class NowPlaying implements EventListener {
             currentTrack = musicManager.player.getPlayingTrack();
             if (currentTrack != null) {
                 try {
-                    if (!oldTrack.getIdentifier().equals(currentTrack.getIdentifier())) {
-                        channel.getManager().setTopic("").queue();
-                        channel.deleteMessageById(idMessageNowPlaying).complete();
-                        idMessageNowPlaying = "";
-                        sendNowPlaying();
-                        oldTrack = currentTrack;
-                    } else {
-                        oldTrack = currentTrack;
-                        String title = currentTrack.getInfo().title;
-                        String position = getTimestamp(currentTrack.getPosition());
-                        String duration = getTimestamp(currentTrack.getDuration());
-                        String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
-                        channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
-                    }
+// Replaced this part with the EventListener at the bottom
+//                    if (!oldTrack.getIdentifier().equals(currentTrack.getIdentifier())) {
+//                        channel.getManager().setTopic("").queue();
+//                        channel.deleteMessageById(idMessageNowPlaying).complete();
+//                        idMessageNowPlaying = "";
+//                        sendNowPlaying();
+//                        oldTrack = currentTrack;
+//                    } else {
+                    oldTrack = currentTrack;
+                    String title = currentTrack.getInfo().title;
+                    String position = getTimestamp(currentTrack.getPosition());
+                    String duration = getTimestamp(currentTrack.getDuration());
+                    String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
+                    channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
+//                    }
                 } catch (Exception e) {
                     oldTrack = currentTrack;
                 }
@@ -129,6 +134,7 @@ public class NowPlaying implements EventListener {
                 channel.getManager().setTopic("").queue();
                 channel.deleteMessageById(idMessageNowPlaying).complete();
                 idMessageNowPlaying = "";
+                musicManager.player.removeListener(this);
             }
             if (npThread.isAlive()) {
                 npThread.npStop();
@@ -177,12 +183,21 @@ public class NowPlaying implements EventListener {
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
                             music.skipTrack(false);
-                            
+
                         }
                     } else {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void onEvent(AudioEvent event) {
+        if (event instanceof TrackStartEvent) {
+            channel.getManager().setTopic("").queue();
+            channel.deleteMessageById(idMessageNowPlaying).complete();
+            sendNowPlaying();
         }
     }
 }
