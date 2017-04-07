@@ -18,23 +18,28 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.managers.AudioManager;
 
 /**
  *
  * @author goupil
  */
-public class Music {
+public class Music implements EventListener {
 
     private final AudioPlayerManager playerManager;
     private final HashMap<Long, GuildMusicManager> musicManagers;
     private NowPlaying nowPlaying;
     private JDA jda;
     private TextChannel channel;
+    private String idMessageNowPlaying;
 
     /**
      *
      * @param channel
+     * @param jda
      */
     public Music(TextChannel channel, JDA jda) {
         this.musicManagers = new HashMap<>();
@@ -43,6 +48,7 @@ public class Music {
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
         nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()), jda, this);
+        idMessageNowPlaying = "";
     }
 
     public synchronized GuildMusicManager getGuildAudioPlayer(Guild guild) {
@@ -71,7 +77,7 @@ public class Music {
             public void trackLoaded(AudioTrack track) {
                 if (channel.getGuild().getAudioManager().isConnected()) {
                     channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
-                    play(musicManager, track, user);
+                    play(musicManager, track);
                 } else {
                     channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
                 }
@@ -84,11 +90,13 @@ public class Music {
                     AudioTrack firstTrack = playlist.getSelectedTrack();
                     if (firstTrack == null) {
                         if (trackUrl.contains("ytsearch:")) {
-                            
+                            AudioTrack track = playlist.getTracks().get(0);
+                            play(musicManager, track);
                             channel.sendMessage("YT search not implemented yet ;)").queue();
+                            channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
                         } else {
                             for (AudioTrack track : playlist.getTracks()) {
-                                play(musicManager, track, user);
+                                play(musicManager, track);
                             }
                             channel.sendMessage("Adding to queue playlist " + playlist.getName() + " with " + playlist.getTracks().size() + " songs").queue();
                         }
@@ -110,7 +118,7 @@ public class Music {
         });
     }
 
-    public void play(GuildMusicManager musicManager, AudioTrack track, Member user) {
+    public void play(GuildMusicManager musicManager, AudioTrack track) {
         musicManager.scheduler.queue(track);
     }
 
@@ -211,10 +219,8 @@ public class Music {
             if (withMsg) {
                 channel.sendMessage("Bye :kissing_heart:").queue();
             }
-        } else {
-            if (withMsg) {
-                channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
-            }
+        } else if (withMsg) {
+            channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
         }
     }
 
@@ -245,11 +251,32 @@ public class Music {
             } else {
                 channel.sendMessage(user.getAsMention() + " Master where are you! :scream:").queue();
             }
+        } else if (user.getVoiceState().inVoiceChannel()) {
+            audioManager.openAudioConnection(user.getVoiceState().getChannel());
         } else {
-            if (user.getVoiceState().inVoiceChannel()) {
-                audioManager.openAudioConnection(user.getVoiceState().getChannel());
-            } else {
-                channel.sendMessage(user.getAsMention() + " Master where are you! :scream:").queue();
+            channel.sendMessage(user.getAsMention() + " Master where are you! :scream:").queue();
+        }
+    }
+
+    @Override
+    public void onEvent(Event event) {
+        ArrayList<String> reactions = new ArrayList<>();
+        reactions.add("❌");
+        reactions.add(":one:");
+        reactions.add(":two:");
+        reactions.add(":three:");
+        reactions.add(":four:");
+        reactions.add("✅");
+        if (!((MessageReactionAddEvent) event).getUser().equals(jda.getSelfUser())) {
+            if (!idMessageNowPlaying.isEmpty() && ((MessageReactionAddEvent) event).getMessageId().equals(idMessageNowPlaying)) {
+                if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))
+                        || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(1))
+                        || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))
+                        || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(3))
+                        || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(4))
+                        || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(5))) {
+                    
+                }
             }
         }
     }

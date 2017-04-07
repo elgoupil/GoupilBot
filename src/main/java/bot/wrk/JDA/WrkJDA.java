@@ -46,6 +46,7 @@ public class WrkJDA extends Thread implements EventListener {
         voiceChannel = server.getVoiceChannelById(voiceChannelId);
         musicbot = new Music(textChannel, jda);
         jda.addEventListener(musicbot.getNowPlaying());
+        jda.addEventListener(musicbot);
         Game.checkChannelCreated(server);
         Game.checkGameChannel(jda, server, voiceChannel);
     }
