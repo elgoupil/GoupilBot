@@ -40,6 +40,7 @@ public class NowPlaying implements EventListener, AudioEventListener {
 
         idMessageNowPlaying = "";
         npThread = new NowPlayingThread(this);
+        npThread.start();
     }
 
     public void showNowPlaying() {
@@ -47,9 +48,7 @@ public class NowPlaying implements EventListener, AudioEventListener {
         if (currentTrack != null) {
             if (!npThread.npIsWorking()) {
                 sendNowPlaying();
-                musicManager.player.addListener(this);
-                npThread = new NowPlayingThread(this);
-                npThread.start();
+                npThread.npWork();
             }
         } else {
             channel.sendMessage("The player is not currently playing anything!").queue();
@@ -104,21 +103,12 @@ public class NowPlaying implements EventListener, AudioEventListener {
             currentTrack = musicManager.player.getPlayingTrack();
             if (currentTrack != null) {
                 try {
-// Replaced this part with the EventListener at the bottom
-//                    if (!oldTrack.getIdentifier().equals(currentTrack.getIdentifier())) {
-//                        channel.getManager().setTopic("").queue();
-//                        channel.deleteMessageById(idMessageNowPlaying).complete();
-//                        idMessageNowPlaying = "";
-//                        sendNowPlaying();
-//                        oldTrack = currentTrack;
-//                    } else {
                     oldTrack = currentTrack;
                     String title = currentTrack.getInfo().title;
                     String position = getTimestamp(currentTrack.getPosition());
                     String duration = getTimestamp(currentTrack.getDuration());
                     String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
                     channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
-//                    }
                 } catch (Exception e) {
                     oldTrack = currentTrack;
                 }
@@ -129,14 +119,14 @@ public class NowPlaying implements EventListener, AudioEventListener {
     }
 
     public void stopNowPlaying() {
-        if (npThread.isAlive()) {
+        if (npThread.npIsWorking()) {
             if (!idMessageNowPlaying.isEmpty()) {
                 channel.getManager().setTopic("").queue();
                 channel.deleteMessageById(idMessageNowPlaying).complete();
                 idMessageNowPlaying = "";
                 musicManager.player.removeListener(this);
             }
-            if (npThread.isAlive()) {
+            if (npThread.npIsWorking()) {
                 npThread.npStop();
             }
         }
@@ -152,6 +142,15 @@ public class NowPlaying implements EventListener, AudioEventListener {
         } else {
             return String.format("%02d:%02d", minutes, seconds);
         }
+    }
+    
+    public boolean isWorking(){
+        return npThread.npIsWorking();
+    }
+    
+    public void stopThread(){
+        stopNowPlaying();
+        npThread.diePotato();
     }
 
     @Override

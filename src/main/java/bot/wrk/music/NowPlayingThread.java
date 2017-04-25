@@ -5,37 +5,56 @@
  */
 package bot.wrk.music;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author renardn
  */
 public class NowPlayingThread extends Thread {
-    
+
     private NowPlaying np;
     private boolean working;
+    private boolean alive;
 
     public NowPlayingThread(NowPlaying np) {
         this.np = np;
         working = false;
+        alive = true;
     }
-    
-    public void npStop(){
+
+    public void npStop() {
         working = false;
     }
-    
-    public boolean npIsWorking(){
+
+    public boolean npIsWorking() {
         return working;
     }
     
+    public void npWork(){
+        working = true;
+    }
+
+    public void diePotato() {
+        alive = false;
+    }
+
     @Override
     public void run() {
-        working = true;
-        while (working) {
-            try {
+        while (alive) {
+            while (working) {
                 np.updateNowPlaying();
+                try {
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(NowPlayingThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            try {
                 sleep(2000);
             } catch (InterruptedException ex) {
-                System.out.println("afafkafakl");
+                Logger.getLogger(NowPlayingThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
