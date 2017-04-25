@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 public class NowPlayingThread extends Thread {
 
     private NowPlaying np;
-    private boolean working;
-    private boolean alive;
+    private volatile boolean working;
+    private volatile boolean alive;
 
     public NowPlayingThread(NowPlaying np) {
         this.np = np;

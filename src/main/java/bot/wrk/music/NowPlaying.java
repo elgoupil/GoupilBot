@@ -37,10 +37,10 @@ public class NowPlaying implements EventListener, AudioEventListener {
         this.musicManager = musicManager;
         this.jda = jda;
         this.music = music;
-
         idMessageNowPlaying = "";
         npThread = new NowPlayingThread(this);
         npThread.start();
+        this.musicManager.player.addListener(this);
     }
 
     public void showNowPlaying() {

@@ -97,9 +97,9 @@ public class Music implements EventListener {
                             if (playlist.getTracks().size() > 4) {
                                 if (idMessageNowPlaying == "") {
                                     tracks = playlist.getTracks();
-                                    String msg = "**Result of search**: " + trackUrl.substring(9) + "\n **1**: " + tracks.get(0).getInfo().title
-                                            + "\n **2**: " + tracks.get(1).getInfo().title + "\n **3**: " + tracks.get(2).getInfo().title
-                                            + "\n **4**: " + tracks.get(3).getInfo().title + "\n **and more...**";
+                                    String msg = "**Result of search**: " + trackUrl.substring(9) + "\n **:one:**: " + tracks.get(0).getInfo().title
+                                            + "\n **:two:**: " + tracks.get(1).getInfo().title + "\n **:three:**: " + tracks.get(2).getInfo().title
+                                            + "\n **:four:**: " + tracks.get(3).getInfo().title + "\n **and more...**";
                                     Message theMessage = channel.sendMessage(msg).complete();
                                     idMessageNowPlaying = theMessage.getId();
                                     try {
@@ -222,15 +222,16 @@ public class Music implements EventListener {
             if (!musicManager.scheduler.getQueue().isEmpty()) {
                 ArrayList<AudioTrack> queue = new ArrayList<>(musicManager.scheduler.getQueue());
                 String message = "Current queue:\n";
-                if (queue.size() > 5) {
-                    for (int i = 0; i < 5; i++) {
-                        message += "\n" + (i + 1) + ".`" + queue.get(i).getInfo().title + "`";
+                if (queue.size() > 4) {
+                    message += "\n 1.`"+musicManager.player.getPlayingTrack().getInfo().title + "`";
+                    for (int i = 0; i < 4; i++) {
+                        message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";
                     }
                     message += "\n\nAnd `" + (queue.size() - 5) + "` more...";
-                } else if (queue.size() <= 5) {
+                } else if (queue.size() <= 4) {
+                    message += "\n 1.`"+musicManager.player.getPlayingTrack().getInfo().title + "`";
                     for (int i = 0; i < queue.size(); i++) {
-                        message += "\n" + (i + 1) + ".`" + queue.get(i).getInfo().title + "`";
-                    }
+                        message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";                    }
                 }
                 channel.sendMessage(message).queue();
             } else {

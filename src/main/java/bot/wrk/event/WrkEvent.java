@@ -39,9 +39,6 @@ public class WrkEvent {
                                 ((MessageReceivedEvent) event).getChannel().sendMessage("Usage : `play 'url'` or `search 'name of the video on YT'`").queue();
                             }
                         }
-                        if ("skip".equalsIgnoreCase(command[0])) {
-                            musicbot.skipTrack(true);
-                        }
                         if ("volume".equalsIgnoreCase(command[0])) {
                             if (command.length == 2) {
                                 musicbot.changeVolume(command[1], true);
@@ -60,15 +57,6 @@ public class WrkEvent {
                         }
                         if ("queue".equalsIgnoreCase(command[0])) {
                             musicbot.showQueue();
-                        }
-                        if ("nowplaying".equalsIgnoreCase(command[0]) || "np".equalsIgnoreCase(command[0])) {
-                            musicbot.showNowPlaying();
-                        }
-                        if ("stop".equalsIgnoreCase(command[0])) {
-                            musicbot.stopMusic(true);
-                        }
-                        if ("pause".equalsIgnoreCase(command[0])) {
-                            musicbot.pauseMusic(true);
                         }
                         if ("summon".equalsIgnoreCase(command[0])) {
                             musicbot.connectToVoiceChannel(((MessageReceivedEvent) event).getGuild().getAudioManager(), ((MessageReceivedEvent) event).getMember(), ((MessageReceivedEvent) event).getTextChannel());
@@ -107,10 +95,14 @@ public class WrkEvent {
                             Start.startBot();
                         }
                         if (("shutdown".equalsIgnoreCase(command[0]) || "sd".equalsIgnoreCase(command[0]))) {
-                            ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " :regional_indicator_k::o2:\t:dizzy_face::gun: ").complete();
-                            musicbot.getNowPlaying().stopThread();
-                            jda.shutdown(true);
-                            System.exit(0);
+                            if (((MessageReceivedEvent) event).getMember().getRoles().contains(((MessageReceivedEvent) event).getGuild().getRoleById("295251361845477376"))) {
+                                ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " :regional_indicator_k::o2:\t:dizzy_face::gun: ").complete();
+                                musicbot.getNowPlaying().stopThread();
+                                jda.shutdown(true);
+                                System.exit(0);
+                            } else {
+                                channel.sendMessage(((MessageReceivedEvent) event).getMember().getAsMention()+" You don't have the permission :smirk:").queue();
+                            }
                         }
                     }
 
