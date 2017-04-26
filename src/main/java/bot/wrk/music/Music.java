@@ -170,7 +170,7 @@ public class Music implements EventListener {
                 if (withMsg) {
                     boolean isOk = musicManager.scheduler.changeVolume(Integer.parseInt(volume));
                     if (!isOk) {
-                        channel.sendMessage("Volume must be between 1 - 100").queue();
+                        channel.sendMessage("Volume must be between 1 - 150").queue();
                     } else {
                         channel.sendMessage("Volume is now " + musicManager.scheduler.getVolume()).queue();
                     }
@@ -210,7 +210,7 @@ public class Music implements EventListener {
     public void shuffleQueue() {
         if (channel.getGuild().getAudioManager().isConnected()) {
             getGuildAudioPlayer(channel.getGuild()).scheduler.shuffleQueue();
-            channel.sendMessage("Successfully shuffled the track!").queue();
+            channel.sendMessage("Successfully shuffled the queue!").queue();
         } else {
             channel.sendMessage("Bot is not connected to any channel! Use summon tu summon the bot").queue();
         }

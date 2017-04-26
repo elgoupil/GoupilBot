@@ -22,6 +22,7 @@ public class Config {
     private String textChannelId;
     private String voiceChannelId;
     private String prefix;
+    private String commanderRole;
 
     public Config() {
     }
@@ -32,7 +33,7 @@ public class Config {
         try {
             lines = Files.readAllLines(Paths.get(path));
             for (String line : lines) {
-                if (!line.contains("//")) {
+                if (!line.startsWith("//")) {
                     String[] parts = line.split("=", 2);
                     String key = parts[0];
                     String option = parts[1];
@@ -55,12 +56,16 @@ public class Config {
                         case "prefix":
                             prefix = option;
                             break;
+                        case "commanderRole":
+                            commanderRole = option;
+                            break;
                     }
+                    ok = true;
                 } else {
                 }
             }
         } catch (IOException e) {
-            System.err.println("File not found in: " + path);
+            System.err.println("Config file not found in: " + path+"\n Or config file is incorect check the example file ;)");
         }
         return ok;
     }
@@ -69,48 +74,28 @@ public class Config {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getOwnerId() {
         return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
     }
 
     public String getServerId() {
         return serverId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
-    }
-
     public String getTextChannelId() {
         return textChannelId;
-    }
-
-    public void setTextChannelId(String textChannelId) {
-        this.textChannelId = textChannelId;
     }
 
     public String getVoiceChannelId() {
         return voiceChannelId;
     }
 
-    public void setVoiceChannelId(String voiceChannelId) {
-        this.voiceChannelId = voiceChannelId;
-    }
-
     public String getPrefix() {
         return prefix;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
+    public String getCommanderRole() {
+        return commanderRole;
     }
-
+    
 }

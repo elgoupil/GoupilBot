@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'bot.Start'
 
-version 'ALPHA-0.2'
+version '1.0'
 
 sourceCompatibility = 1.8
 

@@ -48,10 +48,7 @@ public class Game {
     }
 
     public static void moveChannel(Member member, VoiceChannel channel, Guild server) {
-//        while (server.getMemberById(member.getUser().getId()).getVoiceState().getChannel() != channel) {  
-//            System.out.println("Boucle");
         server.getController().moveVoiceMember(member, channel).complete();
-//        }
     }
 
     public static void checkChannelCreated(Guild server) {
