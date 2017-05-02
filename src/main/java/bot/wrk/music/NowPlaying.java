@@ -44,14 +44,16 @@ public class NowPlaying implements EventListener, AudioEventListener {
     }
 
     public void showNowPlaying() {
-        currentTrack = musicManager.player.getPlayingTrack();
-        if (currentTrack != null) {
-            if (!npThread.npIsWorking()) {
-                sendNowPlaying();
-                npThread.npWork();
+        if (!npThread.npIsWorking()) {
+            currentTrack = musicManager.player.getPlayingTrack();
+            if (currentTrack != null) {
+                if (!npThread.npIsWorking()) {
+                    sendNowPlaying();
+                    npThread.npWork();
+                }
+            } else {
+                channel.sendMessage("The player is not currently playing anything!").queue();
             }
-        } else {
-            channel.sendMessage("The player is not currently playing anything!").queue();
         }
     }
 
@@ -143,12 +145,12 @@ public class NowPlaying implements EventListener, AudioEventListener {
             return String.format("%02d:%02d", minutes, seconds);
         }
     }
-    
-    public boolean isWorking(){
+
+    public boolean isWorking() {
         return npThread.npIsWorking();
     }
-    
-    public void stopThread(){
+
+    public void stopThread() {
         stopNowPlaying();
         npThread.diePotato();
     }

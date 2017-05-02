@@ -150,9 +150,7 @@ public class Music implements EventListener {
 
     public void play(GuildMusicManager musicManager, AudioTrack track) {
         musicManager.scheduler.queue(track);
-        if (!nowPlaying.isWorking()) {
-            showNowPlaying();
-        }
+        showNowPlaying();
     }
 
     public void skipTrack(boolean withMsg) {
@@ -223,15 +221,16 @@ public class Music implements EventListener {
                 ArrayList<AudioTrack> queue = new ArrayList<>(musicManager.scheduler.getQueue());
                 String message = "Current queue:\n";
                 if (queue.size() > 4) {
-                    message += "\n 1.`"+musicManager.player.getPlayingTrack().getInfo().title + "`";
+                    message += "\n 1.`" + musicManager.player.getPlayingTrack().getInfo().title + "`";
                     for (int i = 0; i < 4; i++) {
                         message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";
                     }
                     message += "\n\nAnd `" + (queue.size() - 5) + "` more...";
                 } else if (queue.size() <= 4) {
-                    message += "\n 1.`"+musicManager.player.getPlayingTrack().getInfo().title + "`";
+                    message += "\n 1.`" + musicManager.player.getPlayingTrack().getInfo().title + "`";
                     for (int i = 0; i < queue.size(); i++) {
-                        message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";                    }
+                        message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";
+                    }
                 }
                 channel.sendMessage(message).queue();
             } else {
@@ -274,7 +273,7 @@ public class Music implements EventListener {
     }
 
     public void showNowPlaying() {
-            nowPlaying.showNowPlaying();
+        nowPlaying.showNowPlaying();
     }
 
     public static void connectToVoiceChannel(AudioManager audioManager, Member user, TextChannel channel) {
@@ -340,7 +339,7 @@ public class Music implements EventListener {
                             }
                             channel.deleteMessageById(idMessageNowPlaying).queue();
                             idMessageNowPlaying = "";
-                            channel.sendMessage("Added to queue "+tracks.size()+" tracks").queue();
+                            channel.sendMessage("Added to queue " + tracks.size() + " tracks").queue();
                         }
                     }
                 }

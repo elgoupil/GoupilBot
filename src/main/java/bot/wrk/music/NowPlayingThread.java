@@ -51,11 +51,6 @@ public class NowPlayingThread extends Thread {
                     Logger.getLogger(NowPlayingThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            try {
-                sleep(2000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(NowPlayingThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 }
