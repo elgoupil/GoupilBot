@@ -33,7 +33,7 @@ public class Config {
         try {
             lines = Files.readAllLines(Paths.get(path));
             for (String line : lines) {
-                if (!line.startsWith("//")) {
+                if ((!line.startsWith("//")) && (!line.isEmpty())) {
                     String[] parts = line.split("=", 2);
                     String key = parts[0];
                     String option = parts[1];

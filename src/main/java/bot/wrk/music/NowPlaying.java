@@ -31,6 +31,7 @@ public class NowPlaying implements EventListener, AudioEventListener {
     private NowPlayingThread npThread;
     private AudioTrack currentTrack;
     private AudioTrack oldTrack;
+    private Boolean isPlaying;
 
     public NowPlaying(TextChannel channel, GuildMusicManager musicManager, JDA jda, Music music) {
         this.channel = channel;
@@ -41,6 +42,7 @@ public class NowPlaying implements EventListener, AudioEventListener {
         npThread = new NowPlayingThread(this);
         npThread.start();
         this.musicManager.player.addListener(this);
+        isPlaying = false;
     }
 
     public void showNowPlaying() {
@@ -48,6 +50,7 @@ public class NowPlaying implements EventListener, AudioEventListener {
             currentTrack = musicManager.player.getPlayingTrack();
             if (currentTrack != null) {
                 if (!npThread.npIsWorking()) {
+                    isPlaying = true;
                     sendNowPlaying();
                     npThread.npWork();
                 }
@@ -126,11 +129,11 @@ public class NowPlaying implements EventListener, AudioEventListener {
                 channel.getManager().setTopic("").queue();
                 channel.deleteMessageById(idMessageNowPlaying).complete();
                 idMessageNowPlaying = "";
-                musicManager.player.removeListener(this);
             }
             if (npThread.npIsWorking()) {
                 npThread.npStop();
             }
+            isPlaying = false;
         }
     }
 
@@ -153,6 +156,10 @@ public class NowPlaying implements EventListener, AudioEventListener {
     public void stopThread() {
         stopNowPlaying();
         npThread.diePotato();
+    }
+
+    public Boolean getIsPlaying() {
+        return isPlaying;
     }
 
     @Override

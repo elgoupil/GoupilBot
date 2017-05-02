@@ -61,6 +61,14 @@ public class WrkEvent {
                         if ((prefix + "queue").equalsIgnoreCase(command[0])) {
                             musicbot.showQueue();
                         }
+                        if ((prefix + "coinflip").equalsIgnoreCase(command[0]) || (prefix + "cf").equalsIgnoreCase(command[0])) {
+                            int random = (int) (Math.random() * 100);
+                            if (random > 50) {
+                                ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " http://i.imgur.com/bEJS8T7.png").queue();
+                            } else {
+                                ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " http://i.imgur.com/Ur6tcq1.png").queue();
+                            }
+                        }
                         if ((prefix + "summon").equalsIgnoreCase(command[0])) {
                             musicbot.connectToVoiceChannel(((MessageReceivedEvent) event).getGuild().getAudioManager(), ((MessageReceivedEvent) event).getMember(), ((MessageReceivedEvent) event).getTextChannel());
                             musicbot.changeVolume("15", false);
@@ -123,7 +131,7 @@ public class WrkEvent {
                                     ((MessageReceivedEvent) event).getAuthor().getPrivateChannel().sendMessage(msgHelp).queue();
                                     msg = ":mailbox_with_mail:";
                                 } else {
-                                    msg = "I can't send you private message :cry:";
+                                    msg = "I can't send you private message, send me a message here " + jda.getSelfUser().getAsMention() + " first :cry:";
                                 }
                             }
                             ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " " + msg).queue();
@@ -167,23 +175,27 @@ public class WrkEvent {
                                 if (((MessageReceivedEvent) event).getMember().getRoles().contains(roles.get(0))) {
                                     if (command.length == 2) {
                                         try {
-                                            int nbr = Integer.parseInt(command[1]);
-                                            if (nbr > 0 && nbr < 101) {
-                                                List<Message> messages = channel.getHistory().retrievePast(nbr).complete();
-                                                channel.sendMessage("This can take long").queue();
-                                                for (Message message : messages) {
-                                                    if (!message.isPinned()) {
-                                                        channel.deleteMessageById(message.getId()).queue();
+                                            if (!musicbot.getNowPlaying().getIsPlaying()) {
+                                                int nbr = Integer.parseInt(command[1]);
+                                                if (nbr > 0 && nbr < 101) {
+                                                    List<Message> messages = channel.getHistory().retrievePast(nbr).complete();
+                                                    channel.sendMessage("This can take long").queue();
+                                                    for (Message message : messages) {
+                                                        if (!message.isPinned()) {
+                                                            channel.deleteMessageById(message.getId()).queue();
+                                                        }
                                                     }
+                                                } else {
+                                                    throw new Exception();
                                                 }
-                                            }else{
-                                                throw new Exception();
+                                            } else {
+                                                channel.sendMessage(((MessageReceivedEvent) event).getMember().getAsMention() + " Cannot flush when playing :smirk:").queue();
                                             }
                                         } catch (Exception e) {
                                             channel.sendMessage("Please choose a number between 1 - 100").queue();
                                         }
                                     } else {
-                                        ((MessageReceivedEvent) event).getChannel().sendMessage("Usage : `" + prefix + "volume 1 - 150`").queue();
+                                        ((MessageReceivedEvent) event).getChannel().sendMessage("Usage : `" + prefix + "flushChat 1 - 100`").queue();
                                     }
                                 } else {
                                     channel.sendMessage(((MessageReceivedEvent) event).getMember().getAsMention() + " You don't have the permission :smirk:").queue();

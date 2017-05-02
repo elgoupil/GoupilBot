@@ -311,25 +311,30 @@ public class Music implements EventListener {
                         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))) {
                             channel.deleteMessageById(idMessageNowPlaying).queue();
+                            channel.sendMessage("Canceled search").queue();
                             idMessageNowPlaying = "";
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(1))) {
                             play(musicManager, tracks.get(0));
+                            channel.sendMessage("Added to queue " + tracks.get(0).getInfo().title).queue();
                             channel.deleteMessageById(idMessageNowPlaying).queue();
                             idMessageNowPlaying = "";
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
                             play(musicManager, tracks.get(1));
+                            channel.sendMessage("Added to queue " + tracks.get(1).getInfo().title).queue();
                             channel.deleteMessageById(idMessageNowPlaying).queue();
                             idMessageNowPlaying = "";
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(3))) {
                             play(musicManager, tracks.get(2));
+                            channel.sendMessage("Added to queue " + tracks.get(2).getInfo().title).queue();
                             channel.deleteMessageById(idMessageNowPlaying).queue();
                             idMessageNowPlaying = "";
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(4))) {
                             play(musicManager, tracks.get(3));
+                            channel.sendMessage("Added to queue " + tracks.get(3).getInfo().title).queue();
                             channel.deleteMessageById(idMessageNowPlaying).queue();
                             idMessageNowPlaying = "";
                         }
