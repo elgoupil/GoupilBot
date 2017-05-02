@@ -8,6 +8,7 @@ package bot.wrk.JDA;
 import bot.wrk.event.WrkEvent;
 import bot.wrk.game.Game;
 import bot.wrk.music.Music;
+import java.util.ArrayList;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -32,8 +33,9 @@ public class WrkJDA extends Thread implements EventListener {
     private Music musicbot;
     private String prefix;
     private String commanderRole;
+    private ArrayList<String> blacklist;
 
-    public WrkJDA(String token, String ownerId, String serverId, String textChannelId, String voiceChannelId, String prefix, String commanderRole) {
+    public WrkJDA(String token, String ownerId, String serverId, String textChannelId, String voiceChannelId, String prefix, String commanderRole, ArrayList<String> blacklist) {
         try {
             jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
             jda.setAutoReconnect(true);
@@ -48,6 +50,7 @@ public class WrkJDA extends Thread implements EventListener {
         musicbot = new Music(textChannel, jda);
         this.commanderRole = commanderRole;
         this.prefix = prefix;
+        this.blacklist = blacklist;
         jda.addEventListener(musicbot.getNowPlaying());
         jda.addEventListener(musicbot);
         Game.checkChannelCreated(server);
@@ -72,7 +75,7 @@ public class WrkJDA extends Thread implements EventListener {
 
     @Override
     public void onEvent(Event event) {
-        WrkEvent.eventWrk(event, jda, musicbot, textChannel, prefix, commanderRole);
+        WrkEvent.eventWrk(event, jda, musicbot, textChannel, prefix, commanderRole, blacklist);
     }
 
 }

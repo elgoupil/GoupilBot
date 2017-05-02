@@ -7,6 +7,7 @@ package bot.wrk.event;
 
 import bot.Start;
 import bot.wrk.music.Music;
+import java.util.ArrayList;
 import java.util.List;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -22,7 +23,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
  */
 public class WrkEvent {
 
-    public static void eventWrk(Event event, JDA jda, Music musicbot, TextChannel channel, String prefix, String commanderRole) {
+    public static void eventWrk(Event event, JDA jda, Music musicbot, TextChannel channel, String prefix, String commanderRole, ArrayList<String> blacklist) {
         if (event instanceof MessageReceivedEvent) {
             if (!((MessageReceivedEvent) event).isFromType(ChannelType.PRIVATE)) {
                 if (((MessageReceivedEvent) event).getTextChannel().equals(channel)) {
@@ -126,13 +127,11 @@ public class WrkEvent {
                                     default:
                                         msg = "I don't know that command :sweat_smile:";
                                 }
+                            } else if (((MessageReceivedEvent) event).getAuthor().hasPrivateChannel()) {
+                                ((MessageReceivedEvent) event).getAuthor().getPrivateChannel().sendMessage(msgHelp).queue();
+                                msg = ":mailbox_with_mail:";
                             } else {
-                                if (((MessageReceivedEvent) event).getAuthor().hasPrivateChannel()) {
-                                    ((MessageReceivedEvent) event).getAuthor().getPrivateChannel().sendMessage(msgHelp).queue();
-                                    msg = ":mailbox_with_mail:";
-                                } else {
-                                    msg = "I can't send you private message, send me a message here " + jda.getSelfUser().getAsMention() + " first :cry:";
-                                }
+                                msg = "I can't send you private message, send me a message here " + jda.getSelfUser().getAsMention() + " first :cry:";
                             }
                             ((MessageReceivedEvent) event).getTextChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " " + msg).queue();
                         }
@@ -204,6 +203,12 @@ public class WrkEvent {
                                 channel.sendMessage("The role given in the config file is incorect :sweat_smile:").queue();
                             }
                         }
+                    }
+                }
+                if (blacklist.contains(((MessageReceivedEvent) event).getMessage().getContent().toLowerCase())) {
+                    if ((blacklist != null) || (!blacklist.isEmpty())) {
+                        ((MessageReceivedEvent) event).getChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Jesus is watching :heart:").queue();
+                        ((MessageReceivedEvent) event).getChannel().deleteMessageById(((MessageReceivedEvent) event).getMessage().getId()).queue();
                     }
                 }
             }

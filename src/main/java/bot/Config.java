@@ -8,6 +8,7 @@ package bot;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,15 +24,16 @@ public class Config {
     private String voiceChannelId;
     private String prefix;
     private String commanderRole;
+    private ArrayList<String> blacklist;
 
     public Config() {
     }
 
-    public boolean readFromConfigFile(String path) {
+    public boolean readFromConfigFile(String pathConf) {
         boolean ok = false;
         List<String> lines;
         try {
-            lines = Files.readAllLines(Paths.get(path));
+            lines = Files.readAllLines(Paths.get(pathConf));
             for (String line : lines) {
                 if ((!line.startsWith("//")) && (!line.isEmpty())) {
                     String[] parts = line.split("=", 2);
@@ -59,13 +61,22 @@ public class Config {
                         case "commanderRole":
                             commanderRole = option;
                             break;
+                        case "blacklist":
+                            if (Boolean.parseBoolean(option)) {
+                                blacklist = new ArrayList<>(Files.readAllLines(Paths.get("blacklist.txt")));
+                            }
+                            break;
+                        default:
+                            //Ignore unknown lines
                     }
                     ok = true;
                 } else {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Config file not found in: " + path+"\n Or config file is incorect check the example file ;)");
+            e.printStackTrace();
+            System.err.println("Config file not found in: " + pathConf+"\nOr config file is incorect check the example file ;)");
+            System.err.println("If you configure to true the blacklist, the blacklist text file is maybe missing");
         }
         return ok;
     }
@@ -96,6 +107,9 @@ public class Config {
 
     public String getCommanderRole() {
         return commanderRole;
+    }
+    public ArrayList<String> getBlacklist() {
+        return blacklist;
     }
     
 }
