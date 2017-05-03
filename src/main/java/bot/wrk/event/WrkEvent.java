@@ -26,9 +26,9 @@ public class WrkEvent {
     public static void eventWrk(Event event, JDA jda, Music musicbot, TextChannel channel, String prefix, String commanderRole, ArrayList<String> blacklist) {
         if (event instanceof MessageReceivedEvent) {
             if (!((MessageReceivedEvent) event).isFromType(ChannelType.PRIVATE)) {
+                String[] command = ((MessageReceivedEvent) event).getMessage().getContent().split(" ", 2);
                 if (((MessageReceivedEvent) event).getTextChannel().equals(channel)) {
                     if (((MessageReceivedEvent) event).getAuthor() != jda.getSelfUser()) {
-                        String[] command = ((MessageReceivedEvent) event).getMessage().getContent().split(" ", 2);
                         if ((prefix + "play").equalsIgnoreCase(command[0])) {
                             if (command.length == 2) {
                                 musicbot.loadAndPlay(command[1], ((MessageReceivedEvent) event).getMember());
@@ -210,6 +210,9 @@ public class WrkEvent {
                         ((MessageReceivedEvent) event).getChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Jesus is watching :heart:").queue();
                         ((MessageReceivedEvent) event).getChannel().deleteMessageById(((MessageReceivedEvent) event).getMessage().getId()).queue();
                     }
+                }
+                if ((("hi".equalsIgnoreCase(command[0])) || ("hello".equalsIgnoreCase(command[0])) ||("hey".equalsIgnoreCase(command[0]))) && (command.length == 2) && (!command[1].isEmpty()) && (command[1].equals(jda.getSelfUser().getAsMention()))) {
+                    ((MessageReceivedEvent) event).getChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Hey :wave:").queue();
                 }
             }
         }
