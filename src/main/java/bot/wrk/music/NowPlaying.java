@@ -77,9 +77,11 @@ public class NowPlaying implements EventListener, AudioEventListener {
             channel.addReactionById(idMessageNowPlaying, "⏭").submit();
         } catch (Exception e) {
         }
+        npThread.npWork();
     }
 
     public void sendNowPaused() {
+        npThread.npStop();
         channel.getManager().setTopic("").queue();
         channel.deleteMessageById(idMessageNowPlaying).complete();
 
