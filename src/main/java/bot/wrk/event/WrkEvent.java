@@ -128,6 +128,7 @@ public class WrkEvent {
                                         msg = "I don't know that command :sweat_smile:";
                                 }
                             } else if (((MessageReceivedEvent) event).getAuthor().hasPrivateChannel()) {
+                                ((MessageReceivedEvent) event).getAuthor().openPrivateChannel().queue();
                                 ((MessageReceivedEvent) event).getAuthor().getPrivateChannel().sendMessage(msgHelp).queue();
                                 msg = ":mailbox_with_mail:";
                             } else {
@@ -205,12 +206,12 @@ public class WrkEvent {
                         }
                     }
                 }
-                if (blacklist.contains(((MessageReceivedEvent) event).getMessage().getContent().toLowerCase())) {
-                    if ((blacklist != null) || (!blacklist.isEmpty())) {
-                        ((MessageReceivedEvent) event).getChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Jesus is watching :heart:").queue();
-                        ((MessageReceivedEvent) event).getChannel().deleteMessageById(((MessageReceivedEvent) event).getMessage().getId()).queue();
-                    }
-                }
+//                if (blacklist.contains(((MessageReceivedEvent) event).getMessage().getContent().toLowerCase())) {
+//                    if ((blacklist != null) || (!blacklist.isEmpty())) {
+//                        ((MessageReceivedEvent) event).getChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Jesus is watching :heart:").queue();
+//                        ((MessageReceivedEvent) event).getChannel().deleteMessageById(((MessageReceivedEvent) event).getMessage().getId()).queue();
+//                    }
+//                }
                 if ((("hi".equalsIgnoreCase(command[0])) || ("hello".equalsIgnoreCase(command[0])) ||("hey".equalsIgnoreCase(command[0]))) && (command.length == 2) && (!command[1].isEmpty()) && (command[1].equals(jda.getSelfUser().getAsMention()))) {
                     ((MessageReceivedEvent) event).getChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Hey :wave:").queue();
                 }
