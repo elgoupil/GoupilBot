@@ -212,9 +212,6 @@ public class WrkEvent {
 //                        ((MessageReceivedEvent) event).getChannel().deleteMessageById(((MessageReceivedEvent) event).getMessage().getId()).queue();
 //                    }
 //                }
-                if ((("hi".equalsIgnoreCase(command[0])) || ("hello".equalsIgnoreCase(command[0])) ||("hey".equalsIgnoreCase(command[0]))) && (command.length == 2) && (!command[1].isEmpty()) && (command[1].equals(jda.getSelfUser().getAsMention()))) {
-                    ((MessageReceivedEvent) event).getChannel().sendMessage(((MessageReceivedEvent) event).getAuthor().getAsMention() + " Hey :wave:").queue();
-                }
             }
         }
     }
