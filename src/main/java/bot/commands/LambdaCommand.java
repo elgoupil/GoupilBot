@@ -5,7 +5,6 @@
  */
 package bot.commands;
 
-import bot.commands.music.*;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 

@@ -5,6 +5,7 @@
  */
 package bot.commands.music;
 
+import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -13,8 +14,11 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  * @author renardn
  */
 public class SummonCommand extends Command{
+    
+    private Music music;
 
-    public SummonCommand() {
+    public SummonCommand(Music music) {
+        this.music = music;
         this.name = "summon";
         this.help = "summon the bot in the voice channel";
         this.guildOnly = true;
@@ -23,6 +27,6 @@ public class SummonCommand extends Command{
 
     @Override
     protected void execute(CommandEvent event) {
-        
+         music.connectToVoiceChannel(event.getGuild().getAudioManager(), event.getMember().getVoiceState().getChannel());
     }
 }

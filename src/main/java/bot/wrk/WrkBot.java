@@ -7,6 +7,8 @@ package bot.wrk;
 
 import bot.commands.BroadcastCommand;
 import bot.commands.RestartCommand;
+import bot.commands.music.SummonCommand;
+import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.commandclient.examples.AboutCommand;
 import com.jagrosh.jdautilities.commandclient.examples.GuildlistCommand;
@@ -31,12 +33,14 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
  * @author renardn
  */
 public class WrkBot {
-    
+
     private JDA jda;
     EventWaiter waiter;
     CommandClientBuilder client;
+    Music music;
 
     public WrkBot(Properties prop) {
+        music = new Music();
         waiter = new EventWaiter();
         client = new CommandClientBuilder();
         client.useDefaultGame();
@@ -47,32 +51,25 @@ public class WrkBot {
         client.addCommands(
                 // command to show information about the bot
                 new AboutCommand(Color.GREEN, "an example bot",
-                        new String[]{"Cool commands","Nice examples","Lots of fun!"},
+                        new String[]{"Cool commands", "Nice examples", "Lots of fun!"},
                         new Permission[]{Permission.ADMINISTRATOR}),
-                
                 new GuildlistCommand(waiter),
-                
                 new PingCommand(),
-                
                 new RestartCommand(),
-                
                 new BroadcastCommand(),
-                
+                new SummonCommand(music),
                 new ShutdownCommand());
 
         try {
             jda = new JDABuilder(AccountType.BOT)
                     // set the token
                     .setToken(prop.getProperty("token"))
-                    
                     // set the game for when the bot is loading
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
                     .setGame(Game.of("loading..."))
-                    
                     // add the listeners
                     .addEventListener(waiter)
                     .addEventListener(client.build())
-                    
                     // start it up!
                     .buildAsync();
         } catch (LoginException ex) {

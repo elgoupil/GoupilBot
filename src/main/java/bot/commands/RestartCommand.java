@@ -29,7 +29,7 @@ public class RestartCommand extends Command{
         event.reactWarning();
         event.getJDA().shutdown();
         Properties prop = Conf.readConf("conf.properties");
-        WrkBot bot = new WrkBot(prop);
+        new WrkBot(prop);
     }
     
 }
