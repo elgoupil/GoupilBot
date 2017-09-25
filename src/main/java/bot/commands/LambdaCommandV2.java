@@ -27,6 +27,12 @@ public class LambdaCommandV2 extends Command{
 
     @Override
     protected void execute(CommandEvent event) {
+        String id = servers.getProperty(event.getGuild().getId());
+        if (id != null) {
+            if (!event.getChannel().getId().equals(id)) {
+                return;
+            }
+        }
         event.reply("Echo");
     }
 }

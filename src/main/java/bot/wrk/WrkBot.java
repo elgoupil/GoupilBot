@@ -7,7 +7,10 @@ package bot.wrk;
 
 import bot.Conf;
 import bot.commands.BroadcastCommand;
+import bot.commands.CatCommand;
+import bot.commands.HelloCommand;
 import bot.commands.LambdaCommand;
+import bot.commands.LambdaCommandV2;
 import bot.commands.RestartCommand;
 import bot.commands.SetTextChannelCommand;
 import bot.commands.music.DisconnectCommand;
@@ -69,16 +72,19 @@ public class WrkBot {
                 new PingCommand(),
                 new RestartCommand(),
                 new BroadcastCommand(),
+                new CatCommand(),
                 new LambdaCommand(),
+                new LambdaCommandV2(servProp),
                 new SetTextChannelCommand(servProp),
-                new SummonCommand(music),
-                new DisconnectCommand(music),
-                new PlayCommand(music),
-                new SkipCommand(music),
-                new QueueCommand(music),
-                new SearchCommand(music, waiter),
-                new StopCommand(music),
-                new VolumeCommand(music),
+                new SummonCommand(music, servProp),
+                new DisconnectCommand(music, servProp),
+                new PlayCommand(music, servProp),
+                new SkipCommand(music, servProp),
+                new QueueCommand(music, servProp),
+                new SearchCommand(music, waiter, servProp),
+                new StopCommand(music, servProp),
+                new VolumeCommand(music, servProp),
+                new HelloCommand(waiter, music),
                 new ShutdownCommand());
 
         try {

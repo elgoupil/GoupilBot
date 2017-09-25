@@ -9,6 +9,7 @@ import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
+import java.util.Properties;
 
 /**
  *
@@ -18,8 +19,10 @@ public class SearchCommand extends Command {
 
     private Music music;
     private EventWaiter waiter;
+    private Properties servers;
 
-    public SearchCommand(Music music, EventWaiter waiter) {
+    public SearchCommand(Music music, EventWaiter waiter, Properties servers) {
+        this.servers = servers;
         this.waiter = waiter;
         this.music = music;
         this.name = "search";
@@ -30,6 +33,12 @@ public class SearchCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        String id = servers.getProperty(event.getGuild().getId());
+        if (id != null) {
+            if (!event.getChannel().getId().equals(id)) {
+                return;
+            }
+        }
         if (!event.getArgs().isEmpty()) {
             if (event.getGuild().getAudioManager().isConnected()) {
                 String cc = "ytsearch:"+event.getArgs();

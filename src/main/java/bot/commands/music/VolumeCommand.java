@@ -8,6 +8,7 @@ package bot.commands.music;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import java.util.Properties;
 
 /**
  *
@@ -16,8 +17,10 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 public class VolumeCommand extends Command {
 
     private Music music;
+    private Properties servers;
 
-    public VolumeCommand(Music music) {
+    public VolumeCommand(Music music, Properties servers) {
+        this.servers = servers;
         this.music = music;
         this.name = "volume";
         this.help = "change the volume of the player";
@@ -27,22 +30,30 @@ public class VolumeCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (!event.getArgs().isEmpty()) {
-            if (event.getGuild().getAudioManager().isConnected()) {
+        String id = servers.getProperty(event.getGuild().getId());
+        if (id != null) {
+            if (!event.getChannel().getId().equals(id)) {
+                return;
+            }
+        }
+        if (event.getGuild().getAudioManager().isConnected()) {
+            if (!event.getArgs().isEmpty()) {
                 try {
                     boolean ok = music.getGuildAudioPlayer(event.getGuild()).scheduler.changeVolume(Integer.parseInt(event.getArgs()));
                     if (!ok) {
                         event.replyWarning(event.getMember().getAsMention() + "Usage : `volume 1 - 150`");
+                    }else{
+                        event.reactSuccess();
                     }
                 } catch (Exception e) {
                     event.replyWarning(event.getMember().getAsMention() + "Usage : `volume 1 - 150`");
                 }
             } else {
-                event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
+                event.reply("Volume: "+music.getGuildAudioPlayer(event.getGuild()).scheduler.getVolume());
             }
         } else {
-            event.replyWarning(event.getMember().getAsMention() + " You need to specify a volume");
+            event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
         }
-    }
 
+    }
 }

@@ -32,10 +32,10 @@ public class SetTextChannelCommand extends Command {
             servers.put(event.getGuild().getId(), "");
         }
         if (event.getArgs().isEmpty()) {
-            servers.replace(event.getGuild().getId(), "");
+            servers.replace(event.getGuild().getId(), event.getChannel().getId());
         }else{
-            servers.replace(event.getGuild().getId(), event.getArgs());
+            servers.remove(event.getGuild().getId());
         }
-        Conf.writeConf(servers, "server.properties");
+        Conf.writeConf(servers, "servers.properties");
     }
 }
