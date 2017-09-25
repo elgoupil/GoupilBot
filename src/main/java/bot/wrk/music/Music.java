@@ -33,7 +33,6 @@ public class Music implements EventListener {
 
     private final AudioPlayerManager playerManager;
     private final HashMap<Long, GuildMusicManager> musicManagers;
-    private NowPlaying nowPlaying;
     private JDA jda;
     private TextChannel channel;
     private String idMessageNowPlaying;
@@ -51,7 +50,6 @@ public class Music implements EventListener {
         this.jda = jda;
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
-        nowPlaying = new NowPlaying(channel, getGuildAudioPlayer(channel.getGuild()), jda, this);
         idMessageNowPlaying = "";
     }
 
@@ -67,10 +65,6 @@ public class Music implements EventListener {
         guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
 
         return musicManager;
-    }
-
-    public NowPlaying getNowPlaying() {
-        return nowPlaying;
     }
 
     public void loadAndPlay(final String trackUrl, Member user) {
@@ -150,7 +144,6 @@ public class Music implements EventListener {
 
     public void play(GuildMusicManager musicManager, AudioTrack track) {
         musicManager.scheduler.queue(track);
-        showNowPlaying();
     }
 
     public void skipTrack(boolean withMsg) {
@@ -187,7 +180,6 @@ public class Music implements EventListener {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
         AudioManager audioManager = channel.getGuild().getAudioManager();
         if (audioManager.isConnected()) {
-            nowPlaying.stopNowPlaying();
             musicManager.player.destroy();
             audioManager.closeAudioConnection();
             musicManager.scheduler.clearQueue();
@@ -246,7 +238,6 @@ public class Music implements EventListener {
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
         AudioManager audioManager = channel.getGuild().getAudioManager();
         if (audioManager.isConnected()) {
-            nowPlaying.stopNowPlaying();
             musicManager.player.destroy();
             musicManager.scheduler.clearQueue();
             if (withMsg) {
@@ -270,10 +261,6 @@ public class Music implements EventListener {
                 channel.sendMessage("Playing").queue();
             }
         }
-    }
-
-    public void showNowPlaying() {
-        nowPlaying.showNowPlaying();
     }
 
     public static void connectToVoiceChannel(AudioManager audioManager, Member user, TextChannel channel) {

@@ -1,0 +1,35 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package bot.commands;
+
+import bot.Conf;
+import bot.wrk.WrkBot;
+import com.jagrosh.jdautilities.commandclient.Command;
+import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import java.util.Properties;
+
+/**
+ *
+ * @author renardn
+ */
+public class RestartCommand extends Command{
+
+    public RestartCommand() {
+        this.name = "restart";
+        this.help = "safely restart the bot";
+        this.guildOnly = false;
+        this.ownerCommand = true;
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
+        event.reactWarning();
+        event.getJDA().shutdown();
+        Properties prop = Conf.readConf("conf.properties");
+        WrkBot bot = new WrkBot(prop);
+    }
+    
+}
