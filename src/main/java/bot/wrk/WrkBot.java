@@ -5,9 +5,19 @@
  */
 package bot.wrk;
 
+import bot.Conf;
 import bot.commands.BroadcastCommand;
+import bot.commands.LambdaCommand;
 import bot.commands.RestartCommand;
+import bot.commands.SetTextChannelCommand;
+import bot.commands.music.DisconnectCommand;
+import bot.commands.music.PlayCommand;
+import bot.commands.music.QueueCommand;
+import bot.commands.music.SearchCommand;
+import bot.commands.music.SkipCommand;
+import bot.commands.music.StopCommand;
 import bot.commands.music.SummonCommand;
+import bot.commands.music.VolumeCommand;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.commandclient.examples.AboutCommand;
@@ -38,10 +48,12 @@ public class WrkBot {
     EventWaiter waiter;
     CommandClientBuilder client;
     Music music;
+    private Properties servProp;
 
     public WrkBot(Properties prop) {
         music = new Music();
         waiter = new EventWaiter();
+        servProp = Conf.readConf("servers.properties");
         client = new CommandClientBuilder();
         client.useDefaultGame();
         client.setOwnerId(prop.getProperty("ownerId"));
@@ -57,7 +69,16 @@ public class WrkBot {
                 new PingCommand(),
                 new RestartCommand(),
                 new BroadcastCommand(),
+                new LambdaCommand(),
+                new SetTextChannelCommand(servProp),
                 new SummonCommand(music),
+                new DisconnectCommand(music),
+                new PlayCommand(music),
+                new SkipCommand(music),
+                new QueueCommand(music),
+                new SearchCommand(music, waiter),
+                new StopCommand(music),
+                new VolumeCommand(music),
                 new ShutdownCommand());
 
         try {

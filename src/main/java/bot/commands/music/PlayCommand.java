@@ -13,25 +13,29 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  *
  * @author renardn
  */
-public class SummonCommand extends Command {
+public class PlayCommand extends Command {
 
     private Music music;
 
-    public SummonCommand(Music music) {
+    public PlayCommand(Music music) {
         this.music = music;
-        this.name = "summon";
-        this.help = "summon the bot in the voice channel";
+        this.name = "play";
+        this.help = "play a song with the specified url given in argument";
         this.guildOnly = true;
         this.ownerCommand = false;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        int res = music.connectToVoiceChat(event.getGuild().getAudioManager(), event.getMember());
-        if (res == 0) {
-            event.replyWarning(event.getMember().getAsMention() + " Please connect in a voice channel first");
+        if (!event.getArgs().isEmpty()) {
+            if (event.getGuild().getAudioManager().isConnected()) {
+                music.loadAndPlay(event);
+            } else {
+                event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
+            }
         } else {
-            event.replySuccess("Connected");
+            event.replyWarning(event.getMember().getAsMention() + " You need to specify an url");
         }
     }
+
 }

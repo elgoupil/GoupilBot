@@ -6,8 +6,10 @@
 package bot;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 /**
@@ -15,8 +17,8 @@ import java.util.Properties;
  * @author renardn
  */
 public class Conf {
-    
-    public static Properties readConf(String fileName){
+
+    public static Properties readConf(String fileName) {
         Properties prop = new Properties();
         InputStream input = null;
 
@@ -40,5 +42,29 @@ public class Conf {
         }
         return prop;
     }
-    
+
+    public static void writeConf(Properties prop, String fileName) {
+        OutputStream output = null;
+
+        try {
+
+            output = new FileOutputStream(fileName);
+
+            // save properties to project root folder
+            prop.store(output, null);
+
+        } catch (IOException io) {
+            io.printStackTrace();
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+
 }

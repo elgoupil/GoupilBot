@@ -13,25 +13,25 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  *
  * @author renardn
  */
-public class SummonCommand extends Command {
+public class DisconnectCommand extends Command {
 
     private Music music;
 
-    public SummonCommand(Music music) {
+    public DisconnectCommand(Music music) {
         this.music = music;
-        this.name = "summon";
-        this.help = "summon the bot in the voice channel";
+        this.name = "disconnect";
+        this.help = "disconnect the bot from the voice channel";
         this.guildOnly = true;
         this.ownerCommand = false;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        int res = music.connectToVoiceChat(event.getGuild().getAudioManager(), event.getMember());
+        int res = music.disconnectFromVoiceChat(event.getGuild().getAudioManager());
         if (res == 0) {
-            event.replyWarning(event.getMember().getAsMention() + " Please connect in a voice channel first");
+            event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
         } else {
-            event.replySuccess("Connected");
+            event.replySuccess("Disconnected");
         }
     }
 }
