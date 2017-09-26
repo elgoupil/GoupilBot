@@ -6,7 +6,6 @@
 package bot.commands.music;
 
 import bot.Constant;
-import bot.wrk.music.Music;
 import bot.wrk.music.NowPlaying;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
@@ -17,10 +16,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  */
 public class PlayCommand extends Command {
 
-    private Music music;
-
-    public PlayCommand(Music music) {
-        this.music = music;
+    public PlayCommand() {
         this.name = "play";
         this.help = "play a song with the specified url given in argument";
         this.guildOnly = true;
@@ -37,9 +33,11 @@ public class PlayCommand extends Command {
         }
         if (!event.getArgs().isEmpty()) {
             if (event.getGuild().getAudioManager().isConnected()) {
-                music.loadAndPlay(event);
-                if (!Constant.nowPlayingList.containsKey(event.getGuild().getId())) {
-                    new NowPlaying(event.getGuild(), music);
+                Constant.music.loadAndPlay(event);
+                if (id != null) {
+                    if (!Constant.nowPlayingList.containsKey(event.getGuild().getId())) {
+                        new NowPlaying(event.getGuild(), Constant.music);
+                    }
                 }
             } else {
                 event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");

@@ -5,6 +5,7 @@
  */
 package bot.wrk.music;
 
+import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -188,6 +189,12 @@ public class Music {
                                         }
                                         event.getChannel().deleteMessageById(idMessageNowPlaying).queue();
                                         event.getChannel().sendMessage("Added to queue " + tracks.size() + " tracks").queue();
+                                    }
+                                }
+                                String id = Constant.getServers().getProperty(event.getGuild().getId());
+                                if (id != null) {
+                                    if (!Constant.nowPlayingList.containsKey(event.getGuild().getId())) {
+                                        new NowPlaying(event.getGuild(), Constant.music);
                                     }
                                 }
                             }, 1, TimeUnit.MINUTES, () -> {

@@ -7,7 +7,6 @@ package bot.commands.music;
 
 import bot.Constant;
 import bot.wrk.music.GuildMusicManager;
-import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -17,10 +16,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  */
 public class StopCommand extends Command{
     
-    private Music music;
-
-    public StopCommand(Music music) {
-        this.music = music;
+    public StopCommand() {
         this.name = "stop";
         this.help = "stop the player and clear the queue";
         this.guildOnly = true;
@@ -36,7 +32,7 @@ public class StopCommand extends Command{
             }
         }
         if (event.getGuild().getAudioManager().isConnected()) {
-            GuildMusicManager manager = music.getGuildAudioPlayer(event.getGuild());
+            GuildMusicManager manager = Constant.music.getGuildAudioPlayer(event.getGuild());
             if (manager.player.getPlayingTrack() != null) {
                 manager.scheduler.getQueue().clear();
                 manager.player.stopTrack();

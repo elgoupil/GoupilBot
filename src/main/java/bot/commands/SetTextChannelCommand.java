@@ -5,10 +5,10 @@
  */
 package bot.commands;
 
-import bot.Conf;
 import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import java.util.Properties;
 
 /**
  *
@@ -25,14 +25,16 @@ public class SetTextChannelCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (Constant.getServers().getProperty(event.getGuild().getId()) == null) {
-            Constant.getServers().put(event.getGuild().getId(), "");
+        Properties p = Constant.getServers();
+        if (p.getProperty(event.getGuild().getId()) == null) {
+            p.put(event.getGuild().getId(), "");
         }
         if (event.getArgs().isEmpty()) {
-            Constant.getServers().replace(event.getGuild().getId(), event.getChannel().getId());
+            p.replace(event.getGuild().getId(), event.getChannel().getId());
         }else{
-            Constant.getServers().remove(event.getGuild().getId());
+            p.remove(event.getGuild().getId());
         }
-        Conf.writeConf(Constant.getServers(), "Constant.getServers().properties");
+        Constant.writeServers(p);
+        event.reactSuccess();
     }
 }

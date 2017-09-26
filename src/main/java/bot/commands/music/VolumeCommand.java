@@ -6,7 +6,6 @@
 package bot.commands.music;
 
 import bot.Constant;
-import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -16,10 +15,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  */
 public class VolumeCommand extends Command {
 
-    private Music music;
-
-    public VolumeCommand(Music music) {
-        this.music = music;
+    public VolumeCommand() {
         this.name = "volume";
         this.help = "change the volume of the player";
         this.guildOnly = true;
@@ -37,7 +33,7 @@ public class VolumeCommand extends Command {
         if (event.getGuild().getAudioManager().isConnected()) {
             if (!event.getArgs().isEmpty()) {
                 try {
-                    boolean ok = music.getGuildAudioPlayer(event.getGuild()).scheduler.changeVolume(Integer.parseInt(event.getArgs()));
+                    boolean ok = Constant.music.getGuildAudioPlayer(event.getGuild()).scheduler.changeVolume(Integer.parseInt(event.getArgs()));
                     if (!ok) {
                         event.replyWarning(event.getMember().getAsMention() + "Usage : `volume 1 - 150`");
                     }else{
@@ -47,7 +43,7 @@ public class VolumeCommand extends Command {
                     event.replyWarning(event.getMember().getAsMention() + "Usage : `volume 1 - 150`");
                 }
             } else {
-                event.reply("Volume: "+music.getGuildAudioPlayer(event.getGuild()).scheduler.getVolume());
+                event.reply("Volume: "+Constant.music.getGuildAudioPlayer(event.getGuild()).scheduler.getVolume());
             }
         } else {
             event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");

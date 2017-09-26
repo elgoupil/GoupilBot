@@ -6,7 +6,6 @@
 package bot.commands.music;
 
 import bot.Constant;
-import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -16,10 +15,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  */
 public class SkipCommand extends Command{
     
-    private Music music;
-
-    public SkipCommand(Music music) {
-        this.music = music;
+    public SkipCommand() {
         this.name = "skip";
         this.help = "skip the current track";
         this.guildOnly = true;
@@ -40,7 +36,7 @@ public class SkipCommand extends Command{
         2 = player is not playing
         3 = player is not connected
          */
-        int res = music.skipTrack(event.getTextChannel());
+        int res = Constant.music.skipTrack(event.getTextChannel());
         if (res == 0) {
             event.replySuccess("Skipped the last track");
         }else if (res == 1){

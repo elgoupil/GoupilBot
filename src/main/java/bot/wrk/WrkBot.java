@@ -46,10 +46,9 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 public class WrkBot {
     EventWaiter waiter;
     CommandClientBuilder client;
-    Music music;
 
     public WrkBot(Properties prop) {
-        music = new Music();
+        Constant.music = new Music();
         waiter = new EventWaiter();
         client = new CommandClientBuilder();
         client.useDefaultGame();
@@ -70,15 +69,15 @@ public class WrkBot {
                 new LambdaCommand(),
                 new LambdaCommandV2(),
                 new SetTextChannelCommand(),
-                new SummonCommand(music),
-                new DisconnectCommand(music),
-                new PlayCommand(music),
-                new SkipCommand(music),
-                new QueueCommand(music),
-                new SearchCommand(music, waiter),
-                new StopCommand(music),
-                new VolumeCommand(music),
-                new HelloCommand(waiter, music),
+                new SummonCommand(),
+                new DisconnectCommand(),
+                new PlayCommand(),
+                new SkipCommand(),
+                new QueueCommand(),
+                new SearchCommand(waiter),
+                new StopCommand(),
+                new VolumeCommand(),
+                new HelloCommand(waiter),
                 new bot.commands.ShutdownCommand());
 
         try {

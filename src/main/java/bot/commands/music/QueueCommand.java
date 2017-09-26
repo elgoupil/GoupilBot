@@ -7,7 +7,6 @@ package bot.commands.music;
 
 import bot.Constant;
 import bot.wrk.music.GuildMusicManager;
-import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -19,10 +18,7 @@ import java.util.ArrayList;
  */
 public class QueueCommand extends Command {
 
-    private Music music;
-
-    public QueueCommand(Music music) {
-        this.music = music;
+    public QueueCommand() {
         this.name = "queue";
         this.help = "display the current queue";
         this.guildOnly = true;
@@ -38,7 +34,7 @@ public class QueueCommand extends Command {
             }
         }
         if (event.getGuild().getAudioManager().isConnected()) {
-            GuildMusicManager musicManager = music.getGuildAudioPlayer(event.getGuild());
+            GuildMusicManager musicManager = Constant.music.getGuildAudioPlayer(event.getGuild());
             if (musicManager.player.getPlayingTrack() != null) {
                 ArrayList<AudioTrack> queue = new ArrayList<>(musicManager.scheduler.getQueue());
                 String message = "Current queue:\n";

@@ -6,6 +6,7 @@
 package bot;
 
 import bot.wrk.WrkBot;
+import bot.wrk.music.Music;
 import bot.wrk.music.NowPlaying;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -22,6 +23,8 @@ public class Constant {
     public static WrkBot bot;
     
     public static JDA jda;
+    
+    public static Music music;
     
     public static void writeServers(Properties p){
         Conf.writeConf(p, "servers.properties");

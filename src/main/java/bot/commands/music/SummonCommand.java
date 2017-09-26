@@ -6,7 +6,6 @@
 package bot.commands.music;
 
 import bot.Constant;
-import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -16,10 +15,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  */
 public class SummonCommand extends Command {
 
-    private Music music;
-
-    public SummonCommand(Music music) {
-        this.music = music;
+    public SummonCommand() {
         this.name = "summon";
         this.help = "summon the bot in the voice channel";
         this.guildOnly = true;
@@ -34,7 +30,7 @@ public class SummonCommand extends Command {
                 return;
             }
         }
-        int res = music.connectToVoiceChat(event.getGuild().getAudioManager(), event.getMember());
+        int res = Constant.music.connectToVoiceChat(event.getGuild().getAudioManager(), event.getMember());
         if (res == 0) {
             event.replyWarning(event.getMember().getAsMention() + " Please connect in a voice channel first");
         } else {

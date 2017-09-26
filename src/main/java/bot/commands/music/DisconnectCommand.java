@@ -16,10 +16,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  */
 public class DisconnectCommand extends Command {
 
-    private Music music;
-
-    public DisconnectCommand(Music music) {
-        this.music = music;
+    public DisconnectCommand() {
         this.name = "disconnect";
         this.help = "disconnect the bot from the voice channel";
         this.guildOnly = true;
@@ -34,7 +31,7 @@ public class DisconnectCommand extends Command {
                 return;
             }
         }
-        int res = music.disconnectFromVoiceChat(event.getGuild().getAudioManager());
+        int res = Constant.music.disconnectFromVoiceChat(event.getGuild().getAudioManager());
         if (res == 0) {
             event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
         } else {

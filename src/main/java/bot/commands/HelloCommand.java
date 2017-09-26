@@ -5,6 +5,7 @@
  */
 package bot.commands;
 
+import bot.Constant;
 import bot.wrk.music.GuildMusicManager;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
@@ -20,11 +21,9 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 public class HelloCommand extends Command {
 
     private final EventWaiter waiter;
-    private Music music;
 
-    public HelloCommand(EventWaiter waiter, Music music) {
+    public HelloCommand(EventWaiter waiter) {
         this.waiter = waiter;
-        this.music = music;
         this.name = "hello";
         this.aliases = new String[]{"hi"};
         this.help = "says hello and waits for a response";
@@ -40,15 +39,15 @@ public class HelloCommand extends Command {
                 e -> e.getAuthor().equals(event.getAuthor()) && e.getChannel().equals(event.getChannel()),
                 // respond, inserting the name they listed into the response
                 e -> {
-                    GuildMusicManager manager = music.getGuildAudioPlayer(event.getGuild());
+                    GuildMusicManager manager = Constant.music.getGuildAudioPlayer(event.getGuild());
                     int volume;
                     volume = manager.scheduler.getVolume();
-                    music.connectToVoiceChat(event.getGuild().getAudioManager(), event.getMember());
+                    Constant.music.connectToVoiceChat(event.getGuild().getAudioManager(), event.getMember());
                     if (event.getGuild().getAudioManager().isAttemptingToConnect() || event.getGuild().getAudioManager().isConnected()) {
                         manager.scheduler.getQueue().clear();
                         manager.player.stopTrack();
                         manager.scheduler.changeVolume(volume);
-                        music.loadAndPlayPlaylist(event, waiter, "https://cdn.discordapp.com/attachments/294152853751332864/361932236284493824/HELLO.wav");
+                        Constant.music.loadAndPlayPlaylist(event, waiter, "https://cdn.discordapp.com/attachments/294152853751332864/361932236284493824/HELLO.wav");
                     }
                     e.getChannel().sendMessage("Hello, `" + e.getMessage().getRawContent() + "`! I'm `" + e.getJDA().getSelfUser().getName() + "`!").queue();
 
