@@ -33,7 +33,6 @@ public final class NowPlaying implements EventListener, AudioEventListener {
     private GuildMusicManager musicManager;
     private String idMessageNowPlaying;
     private AudioTrack currentTrack;
-    private AudioTrack oldTrack;
     private Boolean isPlaying;
 
     public NowPlaying(Guild server, Music music) {
@@ -57,7 +56,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                 Logger.getLogger(NowPlaying.class.getName()).log(Level.SEVERE, null, ex);
             }
             sendNowPlaying();
-            while (music.getGuildAudioPlayer(server).player.getPlayingTrack() != null) {
+            while ((music.getGuildAudioPlayer(server).player.getPlayingTrack() != null) || (!music.getGuildAudioPlayer(server).scheduler.getQueue().isEmpty())) {
 
                 if (!music.getGuildAudioPlayer(server).player.isPaused()) {
                     if (isPlaying) {
@@ -138,14 +137,12 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         if (!musicManager.player.isPaused()) {
             currentTrack = musicManager.player.getPlayingTrack();
             try {
-                oldTrack = currentTrack;
                 String title = currentTrack.getInfo().title;
                 String position = getTimestamp(currentTrack.getPosition());
                 String duration = getTimestamp(currentTrack.getDuration());
                 String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
                 channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
             } catch (Exception e) {
-                oldTrack = currentTrack;
             }
         }
     }
@@ -164,6 +161,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                             || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))) {
                             if (musicManager.player.isPaused()) {
+                                isPlaying = true;
                                 musicManager.player.setPaused(false);
                                 channel.getManager().setTopic("").queue();
                                 channel.deleteMessageById(idMessageNowPlaying).complete();
