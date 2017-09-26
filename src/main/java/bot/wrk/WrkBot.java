@@ -17,8 +17,6 @@ import bot.commands.music.DisconnectCommand;
 import bot.commands.music.PlayCommand;
 import bot.commands.music.QueueCommand;
 import bot.commands.music.SearchCommand;
-import bot.commands.music.SkipCommand;
-import bot.commands.music.StopCommand;
 import bot.commands.music.SummonCommand;
 import bot.commands.music.VolumeCommand;
 import bot.wrk.music.Music;
@@ -72,10 +70,8 @@ public class WrkBot {
                 new SummonCommand(),
                 new DisconnectCommand(),
                 new PlayCommand(),
-                new SkipCommand(),
                 new QueueCommand(),
                 new SearchCommand(waiter),
-                new StopCommand(),
                 new VolumeCommand(),
                 new HelloCommand(waiter),
                 new bot.commands.ShutdownCommand());

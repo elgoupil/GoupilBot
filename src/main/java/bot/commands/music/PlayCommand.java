@@ -19,6 +19,7 @@ public class PlayCommand extends Command {
     public PlayCommand() {
         this.name = "play";
         this.help = "play a song with the specified url given in argument";
+        this.arguments = "[url]";
         this.guildOnly = true;
         this.ownerCommand = false;
     }

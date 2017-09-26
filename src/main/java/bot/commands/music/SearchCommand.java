@@ -22,6 +22,7 @@ public class SearchCommand extends Command {
         this.waiter = waiter;
         this.name = "search";
         this.help = "search a song with the specified name given in argument";
+        this.arguments = "[name of the music to search]";
         this.guildOnly = true;
         this.ownerCommand = false;
     }
@@ -37,7 +38,7 @@ public class SearchCommand extends Command {
         if (!event.getArgs().isEmpty()) {
             if (event.getGuild().getAudioManager().isConnected()) {
                 String cc = "ytsearch:" + event.getArgs();
-                Constant.music.loadAndPlayPlaylist(event, waiter, cc);
+                Constant.music.loadAndPlaySearch(event, waiter, cc);
             } else {
                 event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
             }

@@ -5,6 +5,7 @@
  */
 package bot.wrk.music;
 
+import app.helpers.DateTimeLib;
 import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
@@ -12,19 +13,26 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 
 /**
  *
@@ -63,7 +71,21 @@ public class Music {
             @Override
             public void trackLoaded(AudioTrack track) {
                 event.replySuccess("Adding to queue " + track.getInfo().title);
-
+                if (track instanceof YoutubeAudioTrack) {
+                    try {
+                        URIBuilder builder = new URIBuilder(event.getArgs());
+                        List<NameValuePair> list = builder.getQueryParams();
+                        if (list != null) {
+                            for (NameValuePair nameValuePair : list) {
+                                if (nameValuePair.getName().equals("t")) {
+                                    String timeCode = nameValuePair.getValue();
+                                    track.setPosition(splitTimeCode(timeCode));
+                                }
+                            }
+                        }
+                    } catch (URISyntaxException ex) {
+                    }
+                }
                 play(event.getGuild(), track);
             }
 
@@ -71,38 +93,20 @@ public class Music {
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
                 if (firstTrack == null) {
-                    if (event.getArgs().contains("ytsearch:")) {
-                        if (playlist.getTracks().size() > 4) {
-                            List<AudioTrack> tracks = playlist.getTracks();
-                            String msg = "**Result of search**: " + event.getArgs().substring(9) + "\n **:one:**: " + tracks.get(0).getInfo().title
-                                    + "\n **:two:**: " + tracks.get(1).getInfo().title + "\n **:three:**: " + tracks.get(2).getInfo().title
-                                    + "\n **:four:**: " + tracks.get(3).getInfo().title + "\n **and more...**";
-                            Message theMessage = event.getChannel().sendMessage(msg).complete();
-                            String idMessageNowPlaying = theMessage.getId();
-                            try {
-                                event.getChannel().addReactionById(idMessageNowPlaying, "❌").queue();
-                                event.getChannel().addReactionById(idMessageNowPlaying, "1⃣").queue();
-                                event.getChannel().addReactionById(idMessageNowPlaying, "2⃣").queue();
-                                event.getChannel().addReactionById(idMessageNowPlaying, "3⃣").queue();
-                                event.getChannel().addReactionById(idMessageNowPlaying, "4⃣").queue();
-                                event.getChannel().addReactionById(idMessageNowPlaying, "✅").queue();
-                            } catch (Exception e) {
-                            }
-                        } else {
-                            event.replyError("No result");
-                        }
-                    } else {
-                        for (AudioTrack track : playlist.getTracks()) {
-                            play(event.getGuild(), track);
-                        }
-                        event.replySuccess("Adding to queue playlist " + playlist.getName() + " with " + playlist.getTracks().size() + " songs");
+                    for (AudioTrack track : playlist.getTracks()) {
+                        play(event.getGuild(), track);
                     }
+                    event.replySuccess("Adding to queue playlist " + playlist.getName() + " with " + playlist.getTracks().size() + " songs");
                 }
             }
 
             @Override
             public void noMatches() {
-                event.replyWarning("Nothing found by " + event.getArgs());
+                if (event.getArgs().contains("ytsearch:")) {
+                    event.replyWarning("Please use " + Constant.getConf().getProperty("prefix") + "search to search a music");
+                } else {
+                    event.replyWarning("Nothing found by " + event.getArgs());
+                }
             }
 
             @Override
@@ -112,7 +116,7 @@ public class Music {
         });
     }
 
-    public void loadAndPlayPlaylist(final CommandEvent event, EventWaiter waiter, String trackName) {
+    public void loadAndPlaySearch(final CommandEvent event, EventWaiter waiter, String trackName) {
         GuildMusicManager musicManager = getGuildAudioPlayer(event.getGuild());
 
         playerManager.loadItemOrdered(musicManager, trackName, new AudioLoadResultHandler() {
@@ -236,13 +240,13 @@ public class Music {
         2 = player is not playing
         3 = player is not connected
          */
-        int res = 0;
+        int res;
         GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
         if (musicManager.player.getPlayingTrack() == null) {
             res = 2;
         } else if (!channel.getGuild().getAudioManager().isConnected()) {
             res = 3;
-        } else if (musicManager.scheduler.getQueue().size() == 0) {
+        } else if (musicManager.scheduler.getQueue().isEmpty()) {
             musicManager.scheduler.nextTrack();
             res = 0;
         } else {
@@ -269,6 +273,89 @@ public class Music {
             res = 1;
         }
         return res;
+    }
+
+    public Long splitTimeCode(String timeCode) {
+        long time = 0;
+        if (timeCode != null) {
+            if (!timeCode.isEmpty()) {
+                String[] hours = timeCode.split("h");
+                String[] minutes;
+                String[] seconds;
+                String hour = null;
+                String minute = null;
+                String second = null;
+                switch (hours.length) {
+                    case 2: //1,2m3s
+                        hour = hours[0];
+                        minutes = hours[1].split("m");
+                        switch (minutes.length) {
+                            case 2: //2,3s
+                                minute = minutes[0];
+                                seconds = minutes[1].split("s");
+                                switch (seconds.length) {
+                                    case 1: //3
+                                        second = seconds[0];
+                                        break;
+                                }
+                                break;
+                            case 1: //3s
+                                if (minutes[0].contains("s")) {
+                                    seconds = minutes[0].split("s");
+                                    switch (seconds.length) {
+                                        case 1: //3
+                                            second = seconds[0];
+                                            break;
+                                    }
+                                } else {
+                                    minute = minutes[0];
+                                }
+                        }
+                        break;
+                    case 1: //2m3s
+                        if (hours[0].contains("m") || hours[0].contains("s")) {
+                            minutes = hours[0].split("m");
+                            switch (minutes.length) {
+                                case 2: //2,3s
+                                    minute = minutes[0];
+                                    seconds = minutes[1].split("s");
+                                    switch (seconds.length) {
+                                        case 1: //3
+                                            second = seconds[0];
+                                            break;
+                                    }
+                                    break;
+                                case 1: //3s
+                                    if (minutes[0].contains("s")) {
+                                        seconds = minutes[0].split("s");
+                                        switch (seconds.length) {
+                                            case 1: //3
+                                                second = seconds[0];
+                                                break;
+                                        }
+                                    } else {
+                                        minute = minutes[0];
+                                    }
+                                    break;
+                            }
+                        } else {
+                            hour = hours[0];
+                        }
+                        break;
+                }
+                if (hour != null) {
+                    time += Long.parseLong(hour) * 3600;
+                }
+                if (minute != null) {
+                    time += Long.parseLong(minute) * 60;
+                }
+                if (second != null) {
+                    time += Long.parseLong(second);
+                }
+                time = time * 1000;
+            }
+        }
+        return time;
     }
 
 }

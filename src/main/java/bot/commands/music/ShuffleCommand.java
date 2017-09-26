@@ -6,7 +6,6 @@
 package bot.commands.music;
 
 import bot.Constant;
-import bot.wrk.music.GuildMusicManager;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -14,11 +13,11 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  *
  * @author renardn
  */
-public class StopCommand extends Command{
-    
-    public StopCommand() {
-        this.name = "stop";
-        this.help = "stop the player and clear the queue";
+public class ShuffleCommand extends Command {
+
+    public ShuffleCommand() {
+        this.name = "shuffle";
+        this.help = "shuffle the queue";
         this.guildOnly = true;
         this.ownerCommand = false;
     }
@@ -32,13 +31,11 @@ public class StopCommand extends Command{
             }
         }
         if (event.getGuild().getAudioManager().isConnected()) {
-            GuildMusicManager manager = Constant.music.getGuildAudioPlayer(event.getGuild());
-            if (manager.player.getPlayingTrack() != null) {
-                manager.scheduler.getQueue().clear();
-                manager.player.stopTrack();
-                event.replySuccess("Stopped");
+            if (!Constant.music.getGuildAudioPlayer(event.getGuild()).scheduler.getQueue().isEmpty()) {
+                Constant.music.getGuildAudioPlayer(event.getGuild()).scheduler.shuffleQueue();
+                event.reactSuccess();
             }else{
-                event.replyWarning(event.getMember().getAsMention()+" I'm not playing tho");
+                event.reply("The queue is empty, there is nothing to shuffle");
             }
         }else{
             event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");

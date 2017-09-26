@@ -19,6 +19,7 @@ public class BroadcastCommand extends Command{
     public BroadcastCommand() {
         this.name = "broadcast";
         this.help = "broadcast a message on all server";
+        this.arguments = "[message]";
         this.guildOnly = false;
         this.ownerCommand = true;
     }

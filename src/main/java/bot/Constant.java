@@ -8,7 +8,9 @@ package bot;
 import bot.wrk.WrkBot;
 import bot.wrk.music.Music;
 import bot.wrk.music.NowPlaying;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import net.dv8tion.jda.core.JDA;
 
@@ -18,7 +20,7 @@ import net.dv8tion.jda.core.JDA;
  */
 public class Constant {
     
-    public static Hashtable<String, NowPlaying> nowPlayingList = new Hashtable<>();
+    public static Map<String, NowPlaying> nowPlayingList = Collections.synchronizedMap(new HashMap<>());
     
     public static WrkBot bot;
     
