@@ -5,10 +5,10 @@
  */
 package bot.commands.music;
 
+import bot.Constant;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import java.util.Properties;
 
 /**
  *
@@ -17,10 +17,8 @@ import java.util.Properties;
 public class SkipCommand extends Command{
     
     private Music music;
-    private Properties servers;
 
-    public SkipCommand(Music music, Properties servers) {
-        this.servers = servers;
+    public SkipCommand(Music music) {
         this.music = music;
         this.name = "skip";
         this.help = "skip the current track";
@@ -30,7 +28,7 @@ public class SkipCommand extends Command{
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = servers.getProperty(event.getGuild().getId());
+        String id = Constant.getServers().getProperty(event.getGuild().getId());
         if (id != null) {
             if (!event.getChannel().getId().equals(id)) {
                 return;

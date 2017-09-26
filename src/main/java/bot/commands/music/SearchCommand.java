@@ -5,11 +5,12 @@
  */
 package bot.commands.music;
 
+import bot.Constant;
 import bot.wrk.music.Music;
+import bot.wrk.music.NowPlaying;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
-import java.util.Properties;
 
 /**
  *
@@ -19,10 +20,8 @@ public class SearchCommand extends Command {
 
     private Music music;
     private EventWaiter waiter;
-    private Properties servers;
 
-    public SearchCommand(Music music, EventWaiter waiter, Properties servers) {
-        this.servers = servers;
+    public SearchCommand(Music music, EventWaiter waiter) {
         this.waiter = waiter;
         this.music = music;
         this.name = "search";
@@ -33,7 +32,7 @@ public class SearchCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = servers.getProperty(event.getGuild().getId());
+        String id = Constant.getServers().getProperty(event.getGuild().getId());
         if (id != null) {
             if (!event.getChannel().getId().equals(id)) {
                 return;
@@ -43,6 +42,9 @@ public class SearchCommand extends Command {
             if (event.getGuild().getAudioManager().isConnected()) {
                 String cc = "ytsearch:"+event.getArgs();
                 music.loadAndPlayPlaylist(event, waiter, cc);
+                if (!Constant.nowPlayingList.contains(event.getGuild().getId())) {
+                    new NowPlaying(event.getGuild(), music);
+                }
             } else {
                 event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
             }

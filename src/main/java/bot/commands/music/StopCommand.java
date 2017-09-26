@@ -5,11 +5,11 @@
  */
 package bot.commands.music;
 
+import bot.Constant;
 import bot.wrk.music.GuildMusicManager;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import java.util.Properties;
 
 /**
  *
@@ -18,10 +18,8 @@ import java.util.Properties;
 public class StopCommand extends Command{
     
     private Music music;
-    private Properties servers;
 
-    public StopCommand(Music music, Properties servers) {
-        this.servers = servers;
+    public StopCommand(Music music) {
         this.music = music;
         this.name = "stop";
         this.help = "stop the player and clear the queue";
@@ -31,7 +29,7 @@ public class StopCommand extends Command{
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = servers.getProperty(event.getGuild().getId());
+        String id = Constant.getServers().getProperty(event.getGuild().getId());
         if (id != null) {
             if (!event.getChannel().getId().equals(id)) {
                 return;

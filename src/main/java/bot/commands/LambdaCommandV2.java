@@ -5,9 +5,9 @@
  */
 package bot.commands;
 
+import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import java.util.Properties;
 
 /**
  *
@@ -15,10 +15,7 @@ import java.util.Properties;
  */
 public class LambdaCommandV2 extends Command{
     
-    private Properties servers;
-
-    public LambdaCommandV2(Properties servers) {
-        this.servers = servers;
+    public LambdaCommandV2() {
         this.name = "test2";
         this.help = "summon the bot in the voice channel";
         this.guildOnly = true;
@@ -27,7 +24,7 @@ public class LambdaCommandV2 extends Command{
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = servers.getProperty(event.getGuild().getId());
+        String id = Constant.getServers().getProperty(event.getGuild().getId());
         if (id != null) {
             if (!event.getChannel().getId().equals(id)) {
                 return;

@@ -5,7 +5,7 @@
  */
 package bot.wrk;
 
-import bot.Conf;
+import bot.Constant;
 import bot.commands.BroadcastCommand;
 import bot.commands.CatCommand;
 import bot.commands.HelloCommand;
@@ -26,7 +26,6 @@ import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.commandclient.examples.AboutCommand;
 import com.jagrosh.jdautilities.commandclient.examples.GuildlistCommand;
 import com.jagrosh.jdautilities.commandclient.examples.PingCommand;
-import com.jagrosh.jdautilities.commandclient.examples.ShutdownCommand;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import java.awt.Color;
 import java.util.Properties;
@@ -34,7 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.Permission;
@@ -46,17 +44,13 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
  * @author renardn
  */
 public class WrkBot {
-
-    private JDA jda;
     EventWaiter waiter;
     CommandClientBuilder client;
     Music music;
-    private Properties servProp;
 
     public WrkBot(Properties prop) {
         music = new Music();
         waiter = new EventWaiter();
-        servProp = Conf.readConf("servers.properties");
         client = new CommandClientBuilder();
         client.useDefaultGame();
         client.setOwnerId(prop.getProperty("ownerId"));
@@ -74,21 +68,21 @@ public class WrkBot {
                 new BroadcastCommand(),
                 new CatCommand(),
                 new LambdaCommand(),
-                new LambdaCommandV2(servProp),
-                new SetTextChannelCommand(servProp),
-                new SummonCommand(music, servProp),
-                new DisconnectCommand(music, servProp),
-                new PlayCommand(music, servProp),
-                new SkipCommand(music, servProp),
-                new QueueCommand(music, servProp),
-                new SearchCommand(music, waiter, servProp),
-                new StopCommand(music, servProp),
-                new VolumeCommand(music, servProp),
+                new LambdaCommandV2(),
+                new SetTextChannelCommand(),
+                new SummonCommand(music),
+                new DisconnectCommand(music),
+                new PlayCommand(music),
+                new SkipCommand(music),
+                new QueueCommand(music),
+                new SearchCommand(music, waiter),
+                new StopCommand(music),
+                new VolumeCommand(music),
                 new HelloCommand(waiter, music),
-                new ShutdownCommand());
+                new bot.commands.ShutdownCommand());
 
         try {
-            jda = new JDABuilder(AccountType.BOT)
+            Constant.jda = new JDABuilder(AccountType.BOT)
                     // set the token
                     .setToken(prop.getProperty("token"))
                     // set the game for when the bot is loading
@@ -99,11 +93,7 @@ public class WrkBot {
                     .addEventListener(client.build())
                     // start it up!
                     .buildAsync();
-        } catch (LoginException ex) {
-            Logger.getLogger(WrkBot.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(WrkBot.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RateLimitedException ex) {
+        } catch (LoginException | IllegalArgumentException | RateLimitedException ex) {
             Logger.getLogger(WrkBot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

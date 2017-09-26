@@ -5,14 +5,13 @@
  */
 package bot.commands.music;
 
+import bot.Constant;
 import bot.wrk.music.GuildMusicManager;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.ArrayList;
-import java.util.Properties;
-import java.util.concurrent.BlockingQueue;
 
 /**
  *
@@ -21,10 +20,8 @@ import java.util.concurrent.BlockingQueue;
 public class QueueCommand extends Command {
 
     private Music music;
-    private Properties servers;
 
-    public QueueCommand(Music music, Properties servers) {
-        this.servers = servers;
+    public QueueCommand(Music music) {
         this.music = music;
         this.name = "queue";
         this.help = "display the current queue";
@@ -34,7 +31,7 @@ public class QueueCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = servers.getProperty(event.getGuild().getId());
+        String id = Constant.getServers().getProperty(event.getGuild().getId());
         if (id != null) {
             if (!event.getChannel().getId().equals(id)) {
                 return;

@@ -5,6 +5,7 @@
  */
 package bot.commands;
 
+import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.mashape.unirest.http.HttpResponse;
@@ -32,6 +33,12 @@ public class CatCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        String id = Constant.getServers().getProperty(event.getGuild().getId());
+        if (id != null) {
+            if (!event.getChannel().getId().equals(id)) {
+                return;
+            }
+        }
         // use Unirest to poll an API
         Unirest.get("http://random.cat/meow").asJsonAsync(new Callback<JsonNode>() {
 

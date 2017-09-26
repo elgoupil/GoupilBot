@@ -6,9 +6,9 @@
 package bot.commands;
 
 import bot.Conf;
+import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import java.util.Properties;
 
 /**
  *
@@ -16,10 +16,7 @@ import java.util.Properties;
  */
 public class SetTextChannelCommand extends Command {
 
-    private Properties servers;
-
-    public SetTextChannelCommand(Properties servers) {
-        this.servers = servers;
+    public SetTextChannelCommand() {
         this.name = "setTextChannel";
         this.help = "set the text channel for the server";
         this.guildOnly = true;
@@ -28,14 +25,14 @@ public class SetTextChannelCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (servers.getProperty(event.getGuild().getId()) == null) {
-            servers.put(event.getGuild().getId(), "");
+        if (Constant.getServers().getProperty(event.getGuild().getId()) == null) {
+            Constant.getServers().put(event.getGuild().getId(), "");
         }
         if (event.getArgs().isEmpty()) {
-            servers.replace(event.getGuild().getId(), event.getChannel().getId());
+            Constant.getServers().replace(event.getGuild().getId(), event.getChannel().getId());
         }else{
-            servers.remove(event.getGuild().getId());
+            Constant.getServers().remove(event.getGuild().getId());
         }
-        Conf.writeConf(servers, "servers.properties");
+        Conf.writeConf(Constant.getServers(), "Constant.getServers().properties");
     }
 }
