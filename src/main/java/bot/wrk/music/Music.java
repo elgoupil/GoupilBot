@@ -5,7 +5,6 @@
  */
 package bot.wrk.music;
 
-import app.helpers.DateTimeLib;
 import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
@@ -22,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -31,7 +28,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 
 /**
@@ -339,7 +335,11 @@ public class Music {
                                     break;
                             }
                         } else {
-                            hour = hours[0];
+                            if (hours[0].contains("h")) {
+                                hour = hours[0];
+                            } else {
+                                second = hours[0];
+                            }
                         }
                         break;
                 }

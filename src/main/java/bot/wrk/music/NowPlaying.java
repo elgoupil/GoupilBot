@@ -49,15 +49,9 @@ public final class NowPlaying implements EventListener, AudioEventListener {
     public void run() {
         Constant.nowPlayingList.put(server.getId(), this);
         new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(NowPlaying.class.getName()).log(Level.SEVERE, null, ex);
+            while (music.getGuildAudioPlayer(server).player.getPlayingTrack() == null) {
             }
-            try {
-                sendNowPlaying();
-            } catch (Exception e) {
-            }
+            sendNowPlaying();
             while ((music.getGuildAudioPlayer(server).player.getPlayingTrack() != null) || (!music.getGuildAudioPlayer(server).scheduler.getQueue().isEmpty())) {
 
                 if (!music.getGuildAudioPlayer(server).player.isPaused()) {
@@ -88,6 +82,16 @@ public final class NowPlaying implements EventListener, AudioEventListener {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
         } else {
             return String.format("%02d:%02d", minutes, seconds);
+        }
+    }
+
+    public void resendNowPlaying() {
+        if (isPlaying) {
+            channel.deleteMessageById(idMessageNowPlaying).complete();
+            idMessageNowPlaying = "";
+            sendNowPlaying();
+        } else {
+            sendNowPaused();
         }
     }
 

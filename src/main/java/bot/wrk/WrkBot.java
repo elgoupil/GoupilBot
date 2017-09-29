@@ -14,9 +14,11 @@ import bot.commands.LambdaCommandV2;
 import bot.commands.RestartCommand;
 import bot.commands.SetTextChannelCommand;
 import bot.commands.music.DisconnectCommand;
+import bot.commands.music.NowPlayingCommand;
 import bot.commands.music.PlayCommand;
 import bot.commands.music.QueueCommand;
 import bot.commands.music.SearchCommand;
+import bot.commands.music.ShuffleCommand;
 import bot.commands.music.SummonCommand;
 import bot.commands.music.VolumeCommand;
 import bot.wrk.music.Music;
@@ -74,6 +76,8 @@ public class WrkBot {
                 new SearchCommand(waiter),
                 new VolumeCommand(),
                 new HelloCommand(waiter),
+                new NowPlayingCommand(),
+                new ShuffleCommand(),
                 new bot.commands.ShutdownCommand());
 
         try {
