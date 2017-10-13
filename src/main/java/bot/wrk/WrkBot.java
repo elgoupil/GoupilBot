@@ -13,6 +13,7 @@ import bot.commands.LambdaCommand;
 import bot.commands.LambdaCommandV2;
 import bot.commands.RestartCommand;
 import bot.commands.SetTextChannelCommand;
+import bot.commands.SetVoiceChannelCommand;
 import bot.commands.music.DisconnectCommand;
 import bot.commands.music.NowPlayingCommand;
 import bot.commands.music.PlayCommand;
@@ -45,11 +46,13 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
  */
 public class WrkBot {
     EventWaiter waiter;
+    WrkGame wrkGame;
     CommandClientBuilder client;
 
     public WrkBot(Properties prop) {
         Constant.music = new Music();
-        waiter = new EventWaiter();
+        Constant.waiter = waiter = new EventWaiter();
+        wrkGame = new WrkGame();
         client = new CommandClientBuilder();
         client.useDefaultGame();
         client.setOwnerId(prop.getProperty("ownerId"));
@@ -58,9 +61,9 @@ public class WrkBot {
         // adds commands
         client.addCommands(
                 // command to show information about the bot
-                new AboutCommand(Color.GREEN, "an example bot",
-                        new String[]{"Cool commands", "Nice examples", "Lots of fun!"},
-                        new Permission[]{Permission.ADMINISTRATOR}),
+                new AboutCommand(Color.GREEN, "a music bot with a lot more",
+                        new String[]{"Cool commands", "Nice cats", "Lots of dicks!", "A mean Potch"},
+                        new Permission[]{Permission.MANAGE_CHANNEL, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION, Permission.VOICE_MOVE_OTHERS, Permission.VOICE_SPEAK}),
                 new GuildlistCommand(waiter),
                 new PingCommand(),
                 new RestartCommand(),
@@ -78,6 +81,7 @@ public class WrkBot {
                 new HelloCommand(waiter),
                 new NowPlayingCommand(),
                 new ShuffleCommand(),
+                new SetVoiceChannelCommand(),
                 new bot.commands.ShutdownCommand());
 
         try {
@@ -90,6 +94,7 @@ public class WrkBot {
                     // add the listeners
                     .addEventListener(waiter)
                     .addEventListener(client.build())
+                    .addEventListener(wrkGame)
                     // start it up!
                     .buildAsync();
         } catch (LoginException | IllegalArgumentException | RateLimitedException ex) {

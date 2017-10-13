@@ -25,7 +25,7 @@ public class SetTextChannelCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        Properties p = Constant.getServers();
+        Properties p = Constant.getTextChannelConf();
         if (p.getProperty(event.getGuild().getId()) == null) {
             p.put(event.getGuild().getId(), "");
         }
@@ -34,7 +34,7 @@ public class SetTextChannelCommand extends Command {
         }else{
             p.remove(event.getGuild().getId());
         }
-        Constant.writeServers(p);
+        Constant.writeTextChannelConf(p);
         event.reactSuccess();
     }
 }

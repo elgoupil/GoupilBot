@@ -27,7 +27,7 @@ import net.dv8tion.jda.core.hooks.EventListener;
  */
 public final class NowPlaying implements EventListener, AudioEventListener {
 
-    private final Guild server;
+    public final Guild server;
     private Music music;
     private TextChannel channel;
     private GuildMusicManager musicManager;
@@ -38,7 +38,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
     public NowPlaying(Guild server, Music music) {
         this.music = music;
         this.server = server;
-        channel = Constant.jda.getTextChannelById(Constant.getServers().getProperty(this.server.getId()));
+        channel = Constant.jda.getTextChannelById(Constant.getTextChannelConf().getProperty(this.server.getId()));
         musicManager = music.getGuildAudioPlayer(server);
         idMessageNowPlaying = "";
         musicManager.player.addListener(this);
@@ -108,8 +108,8 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         Message theMessage = channel.sendMessage(msg).complete();
         idMessageNowPlaying = theMessage.getId();
         try {
-            channel.addReactionById(idMessageNowPlaying, "⏯").complete(true);
             channel.addReactionById(idMessageNowPlaying, "⏹").complete(true);
+            channel.addReactionById(idMessageNowPlaying, "⏯").complete(true);
             channel.addReactionById(idMessageNowPlaying, "⏭").submit();
         } catch (Exception e) {
         }
@@ -133,8 +133,8 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         Message theMessage = channel.sendMessage(msg).complete();
         idMessageNowPlaying = theMessage.getId();
         try {
-            channel.addReactionById(idMessageNowPlaying, "⏯").complete(true);
             channel.addReactionById(idMessageNowPlaying, "⏹").complete(true);
+            channel.addReactionById(idMessageNowPlaying, "⏯").complete(true);
             channel.addReactionById(idMessageNowPlaying, "⏭").submit();
         } catch (Exception e) {
         }

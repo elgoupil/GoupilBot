@@ -6,7 +6,10 @@
 package bot.commands;
 
 import bot.Conf;
+import bot.Constant;
 import bot.wrk.WrkBot;
+import bot.wrk.music.GuildMusicManager;
+import bot.wrk.music.NowPlaying;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import java.util.Properties;
@@ -15,7 +18,7 @@ import java.util.Properties;
  *
  * @author renardn
  */
-public class RestartCommand extends Command{
+public class RestartCommand extends Command {
 
     public RestartCommand() {
         this.name = "restart";
@@ -26,10 +29,17 @@ public class RestartCommand extends Command{
 
     @Override
     protected void execute(CommandEvent event) {
+        for (NowPlaying np : Constant.nowPlayingList.values()) {
+            GuildMusicManager gm = Constant.music.getGuildAudioPlayer(np.server);
+            Constant.music.disconnectFromVoiceChat(np.server.getAudioManager());
+            gm.scheduler.clearQueue();
+            gm.player.stopTrack();
+        }
+        while (!Constant.nowPlayingList.isEmpty()) {
+        }
         event.reactWarning();
         event.getJDA().shutdown();
         Properties prop = Conf.readConf("conf.properties");
         new WrkBot(prop);
     }
-    
 }

@@ -8,6 +8,7 @@ package bot;
 import bot.wrk.WrkBot;
 import bot.wrk.music.Music;
 import bot.wrk.music.NowPlaying;
+import com.jagrosh.jdautilities.waiter.EventWaiter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +29,30 @@ public class Constant {
     
     public static Music music;
     
-    public static void writeServers(Properties p){
-        Conf.writeConf(p, "servers.properties");
+    public static EventWaiter waiter;
+    
+    public static void writeTextChannelConf(Properties p){
+        Conf.writeConf(p, "textChannels.properties");
     }
     
     public static void writeConf(Properties p){
         Conf.writeConf(p, "conf.properties");
     }
     
-    public static Properties getServers(){
-        return Conf.readConf("servers.properties");
+    public static void writeVoiceChannelConf(Properties p){
+        Conf.writeConf(p, "voiceChannels.properties");
+    }
+    
+    public static Properties getTextChannelConf(){
+        return Conf.readConf("textChannels.properties");
     }
     
     public static Properties getConf(){
         return Conf.readConf("conf.properties");
+    }
+    
+    public static Properties getVoiceChannelConf(){
+        return Conf.readConf("voiceChannels.properties");
     }
     
 }

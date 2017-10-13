@@ -5,6 +5,9 @@
  */
 package bot.commands;
 
+import bot.Constant;
+import bot.wrk.music.GuildMusicManager;
+import bot.wrk.music.NowPlaying;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
@@ -17,6 +20,7 @@ public class ShutdownCommand extends Command {
     public ShutdownCommand()
     {
         this.name = "shutdown";
+        this.aliases = new String[]{"sd"};
         this.help = "safely shuts off the bot";
         this.guildOnly = false;
         this.ownerCommand = true;
@@ -24,6 +28,14 @@ public class ShutdownCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        for (NowPlaying np : Constant.nowPlayingList.values()) {
+            GuildMusicManager gm = Constant.music.getGuildAudioPlayer(np.server);
+            Constant.music.disconnectFromVoiceChat(np.server.getAudioManager());
+            gm.scheduler.clearQueue();
+            gm.player.stopTrack();
+        }
+        while (!Constant.nowPlayingList.isEmpty()) {
+        }
         event.reactWarning();
         event.getJDA().shutdown();
         System.exit(0);

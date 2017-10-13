@@ -26,7 +26,7 @@ public class PlayCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = Constant.getServers().getProperty(event.getGuild().getId());
+        String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
         if (id != null) {
             if (!event.getChannel().getId().equals(id)) {
                 return;

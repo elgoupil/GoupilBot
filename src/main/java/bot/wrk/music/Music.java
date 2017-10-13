@@ -191,7 +191,7 @@ public class Music {
                                         event.getChannel().sendMessage("Added to queue " + tracks.size() + " tracks").queue();
                                     }
                                 }
-                                String id = Constant.getServers().getProperty(event.getGuild().getId());
+                                String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
                                 if (id != null) {
                                     if (!Constant.nowPlayingList.containsKey(event.getGuild().getId())) {
                                         new NowPlaying(event.getGuild(), Constant.music);
