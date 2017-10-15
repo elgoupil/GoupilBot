@@ -11,9 +11,12 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEvent;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
 import com.sedmelluq.discord.lavaplayer.player.event.TrackStartEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -34,6 +37,8 @@ public final class NowPlaying implements EventListener, AudioEventListener {
     private String idMessageNowPlaying;
     private AudioTrack currentTrack;
     private Boolean isPlaying;
+    private ArrayList<Color> colorList;
+    private Iterator<Color> itColorList;
 
     public NowPlaying(Guild server, Music music) {
         this.music = music;
@@ -43,6 +48,14 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         idMessageNowPlaying = "";
         musicManager.player.addListener(this);
         Constant.jda.addEventListener(this);
+        colorList = new ArrayList<>();
+        colorList.add(Color.RED);
+        colorList.add(Color.ORANGE);
+        colorList.add(Color.YELLOW);
+        colorList.add(Color.GREEN);
+        colorList.add(Color.CYAN);
+        colorList.add(Color.BLUE);
+        itColorList = colorList.iterator();
         run();
     }
 
@@ -103,9 +116,14 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         String position = getTimestamp(currentTrack.getPosition());
         String duration = getTimestamp(currentTrack.getDuration());
 
-        String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
+        String msg = String.format("%s\n\n**Time:** [%s / %s]", title, position, duration);
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(server.getSelfMember().getColor());
+        builder.setTitle("Playing:");
+        builder.setDescription(msg);
+        builder.setColor(server.getSelfMember().getColor());
         channel.getManager().setTopic("**Playing:** " + title).queue();
-        Message theMessage = channel.sendMessage(msg).complete();
+        Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
         try {
             channel.addReactionById(idMessageNowPlaying, "⏹").complete(true);
@@ -128,9 +146,13 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         String position = getTimestamp(currentTrack.getPosition());
         String duration = getTimestamp(currentTrack.getDuration());
 
-        String msg = String.format("**Paused:** %s\n**Time:** [%s / %s]", title, position, duration);
+        String msg = String.format("%s\n\n**Time:** [%s / %s]", title, position, duration);
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(server.getSelfMember().getColor());
+        builder.setTitle("Paused:");
+        builder.setDescription(msg);
         channel.getManager().setTopic("**Paused:** " + title).queue();
-        Message theMessage = channel.sendMessage(msg).complete();
+        Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
         try {
             channel.addReactionById(idMessageNowPlaying, "⏹").complete(true);
@@ -147,8 +169,17 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                 String title = currentTrack.getInfo().title;
                 String position = getTimestamp(currentTrack.getPosition());
                 String duration = getTimestamp(currentTrack.getDuration());
-                String msg = String.format("**Playing:** %s\n**Time:** [%s / %s]", title, position, duration);
-                channel.getMessageById(idMessageNowPlaying).complete().editMessage(msg).queue();
+                String msg = String.format("%s\n\n**Time:** \n[%s / %s]", title, position, duration);
+                EmbedBuilder builder = new EmbedBuilder();
+                if (itColorList.hasNext()) {
+                    builder.setColor(itColorList.next());
+                } else {
+                    itColorList = colorList.iterator();
+                    builder.setColor(itColorList.next());
+                }
+                builder.setTitle("Playing:");
+                builder.setDescription(msg);
+                channel.getMessageById(idMessageNowPlaying).complete().editMessage(builder.build()).queue();
             } catch (Exception e) {
             }
         }

@@ -8,13 +8,17 @@ package bot.commands;
 import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import java.awt.Color;
+import java.util.concurrent.TimeUnit;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Message;
 
 /**
  *
  * @author renardn
  */
-public class LambdaCommandV2 extends Command{
-    
+public class LambdaCommandV2 extends Command {
+
     public LambdaCommandV2() {
         this.name = "test2";
         this.help = "summon the bot in the voice channel";
@@ -30,6 +34,10 @@ public class LambdaCommandV2 extends Command{
                 return;
             }
         }
-        event.reply("Echo");
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle("Oui");
+        builder.setDescription("Bonjour les tests c'est bien");
+        builder.setColor(Color.black);
+        Message msg = event.getChannel().sendMessage(builder.build()).complete();
     }
 }

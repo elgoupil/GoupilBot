@@ -11,6 +11,7 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.ArrayList;
+import net.dv8tion.jda.core.EmbedBuilder;
 
 /**
  *
@@ -37,22 +38,27 @@ public class QueueCommand extends Command {
             GuildMusicManager musicManager = Constant.music.getGuildAudioPlayer(event.getGuild());
             if (musicManager.player.getPlayingTrack() != null) {
                 ArrayList<AudioTrack> queue = new ArrayList<>(musicManager.scheduler.getQueue());
-                String message = "Current queue:\n";
+                String message = "";
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Current queue:");
+                builder.setColor(event.getGuild().getSelfMember().getColor());
                 if (queue.size() > 4) {
-                    message += "\n 1.`" + musicManager.player.getPlayingTrack().getInfo().title + "`";
+                    message += "1.`" + musicManager.player.getPlayingTrack().getInfo().title + "`";
                     for (int i = 0; i < 4; i++) {
                         message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";
                     }
                     message += "\n\nAnd `" + (queue.size() - 4) + "` more...";
-                    event.reply(message);
+                    builder.setDescription(message);
+                    event.reply(builder.build());
                 } else if (queue.isEmpty()) {
                     event.replyWarning("The queue is empty");
                 } else if (queue.size() <= 4) {
-                    message += "\n 1.`" + musicManager.player.getPlayingTrack().getInfo().title + "`";
+                    message += "1.`" + musicManager.player.getPlayingTrack().getInfo().title + "`";
                     for (int i = 0; i < queue.size(); i++) {
                         message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";
                     }
-                    event.reply(message);
+                    builder.setDescription(message);
+                    event.reply(builder.build());
                 }
             }
         } else {
