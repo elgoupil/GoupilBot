@@ -16,9 +16,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.jagrosh:JDA-Utilities:1.7'
-    compile 'net.dv8tion:JDA:3.3.1_284'
-    compile 'com.sedmelluq:lavaplayer:1.2.43'
+    compile 'com.jagrosh:JDA-Utilities:1.8'
+    compile 'net.dv8tion:JDA:3.3.1_289'
+    compile 'com.sedmelluq:lavaplayer:1.2.42'
     compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
 }
 

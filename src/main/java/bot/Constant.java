@@ -11,9 +11,11 @@ import bot.wrk.music.NowPlaying;
 import com.jagrosh.jdautilities.waiter.EventWaiter;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 /**
  *
@@ -22,6 +24,8 @@ import net.dv8tion.jda.core.JDA;
 public class Constant {
     
     public static Map<String, NowPlaying> nowPlayingList = Collections.synchronizedMap(new HashMap<>());
+    
+    public static Map<String, List<VoiceChannel>> gameList = Collections.synchronizedMap(new HashMap<>());
     
     public static WrkBot bot;
     
