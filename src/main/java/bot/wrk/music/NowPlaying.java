@@ -144,7 +144,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
             trackImgUrl = Constant.lambdaMusicIconUrl;
         }
         builder.setThumbnail(trackImgUrl);
-        builder.setFooter("Goupil Bot", server.getIconUrl());
+        builder.setFooter(Constant.jda.getSelfUser().getName(), server.getIconUrl());
         channel.getManager().setTopic("**Playing:** " + title).queue();
         Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
@@ -175,7 +175,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         builder.setTitle("Paused:");
         builder.setDescription(msg);
         builder.setThumbnail(trackImgUrl);
-        builder.setFooter("Goupil Bot", server.getIconUrl());
+        builder.setFooter(Constant.jda.getSelfUser().getName(), server.getIconUrl());
         channel.getManager().setTopic("**Paused:** " + title).queue();
         Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
@@ -205,7 +205,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                 builder.setTitle("Playing:");
                 builder.setDescription(msg);
                 builder.setThumbnail(trackImgUrl);
-                builder.setFooter("Goupil Bot", server.getIconUrl());
+                builder.setFooter(Constant.jda.getSelfUser().getName(), server.getIconUrl());
 
                 channel.getMessageById(idMessageNowPlaying).complete().editMessage(builder.build()).queue();
             } catch (Exception e) {
