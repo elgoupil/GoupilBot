@@ -17,6 +17,7 @@ public class NowPlayingCommand extends Command {
 
     public NowPlayingCommand() {
         this.name = "nowPlaying";
+        this.aliases = new String[]{"np"};
         this.help = "show the current playing track";
         this.guildOnly = true;
         this.ownerCommand = false;

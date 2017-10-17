@@ -17,7 +17,7 @@ public class SummonCommand extends Command {
 
     public SummonCommand() {
         this.name = "summon";
-        this.help = "summon the bot in the voice channel";
+        this.help = "summon or move the bot in your voice channel";
         this.guildOnly = true;
         this.ownerCommand = false;
     }

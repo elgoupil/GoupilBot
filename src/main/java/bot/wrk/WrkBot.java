@@ -55,9 +55,9 @@ public class WrkBot {
         wrkGame = new WrkGame();
         client = new CommandClientBuilder();
         client.useDefaultGame();
-        client.setOwnerId(prop.getProperty("ownerId"));
+        client.setOwnerId(Constant.ownerId);
         client.setEmojis("✅", "⚠", "❌");
-        client.setPrefix(prop.getProperty("prefix"));
+        client.setPrefix(Constant.prefix);
         // adds commands
         client.addCommands(
                 // command to show information about the bot

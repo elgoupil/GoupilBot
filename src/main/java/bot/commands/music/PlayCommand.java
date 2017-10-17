@@ -32,8 +32,8 @@ public class PlayCommand extends Command {
                 return;
             }
         }
-        if (!event.getArgs().isEmpty()) {
-            if (event.getGuild().getAudioManager().isConnected()) {
+        if (event.getGuild().getAudioManager().isConnected()) {
+            if (!event.getArgs().isEmpty()) {
                 Constant.music.loadAndPlay(event);
                 if (id != null) {
                     if (!Constant.nowPlayingList.containsKey(event.getGuild().getId())) {
@@ -41,10 +41,10 @@ public class PlayCommand extends Command {
                     }
                 }
             } else {
-                event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
+                event.replyWarning(event.getMember().getAsMention() + " You need to specify an url");
             }
         } else {
-            event.replyWarning(event.getMember().getAsMention() + " You need to specify an url");
+            event.replyWarning(event.getMember().getAsMention() + " I'm not even connected :joy:");
         }
     }
 

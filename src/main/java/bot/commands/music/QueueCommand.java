@@ -58,6 +58,7 @@ public class QueueCommand extends Command {
                         message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";
                     }
                     builder.setDescription(message);
+                    builder.setFooter("Goupil Bot", event.getGuild().getIconUrl());
                     event.reply(builder.build());
                 }
             }

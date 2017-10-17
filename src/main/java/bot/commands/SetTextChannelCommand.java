@@ -20,7 +20,8 @@ public class SetTextChannelCommand extends Command {
         this.name = "setTextChannel";
         this.help = "set the text channel for the server";
         this.guildOnly = true;
-        this.ownerCommand = true;
+        this.ownerCommand = false;
+        this.requiredRole = Constant.adminRole;
     }
 
     @Override
@@ -31,8 +32,13 @@ public class SetTextChannelCommand extends Command {
         }
         if (event.getArgs().isEmpty()) {
             p.replace(event.getGuild().getId(), event.getChannel().getId());
-        }else{
-            p.remove(event.getGuild().getId());
+        } else {
+            try {
+                Constant.getVoiceChannelConf().getProperty(event.getGuild().getId());
+                p.remove(event.getGuild().getId());
+            } catch (Exception e) {
+                event.replyError("Please unset the voice channel first.\nSee `"+Constant.prefix+"help setVoiceChannel`");
+            }
         }
         Constant.writeTextChannelConf(p);
         event.reactSuccess();

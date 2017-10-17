@@ -75,31 +75,35 @@ public class WrkGame implements EventListener {
         GenericGuildVoiceEvent gEvent = (GenericGuildVoiceEvent) event;
         TextChannel textChannel;
         textChannel = event.getJDA().getTextChannelById(Constant.getTextChannelConf().getProperty(gEvent.getGuild().getId()));
-        Message msg = textChannel.sendMessage(" Hi " + gEvent.getMember().getAsMention() + ", wanna be moved in your game's Channel?\n\n Answer `Yes/No`").complete();
+        Message msg = textChannel.sendMessage(" Hi " + gEvent.getMember().getAsMention() + ", wanna be moved in your game's Channel?\nAnswer `Yes/No`").complete();
         Constant.waiter.waitForEvent(GuildMessageReceivedEvent.class,
-                 e -> e.getMember().equals(gEvent.getMember()) && e.getChannel().equals(textChannel),
+                e -> e.getMember().equals(gEvent.getMember()) && e.getChannel().equals(textChannel),
                 e -> {
                     if (e.getMessage().getContent().equalsIgnoreCase("Yes") || e.getMessage().getContent().equalsIgnoreCase("y")) {
-//                        textChannel.sendMessage(gEvent.getMember().getAsMention() + " OK, wait because it's not implemented").queue();
+                        msg.delete().queue();
+                        e.getMessage().delete().queue();
                         gameYes(event);
                     } else if (e.getMessage().getContent().equalsIgnoreCase("No") || e.getMessage().getContent().equalsIgnoreCase("n")) {
-                        textChannel.sendMessage(e.getMember().getAsMention() + " Okay, nevermind...").queue();
+                        msg.delete().queue();
+                        e.getMessage().delete().queue();
                     } else {
-                        textChannel.sendMessage(gEvent.getMember().getAsMention() + " `Yes/No` Retry").queue();
+                        textChannel.sendMessage(gEvent.getMember().getAsMention() + " `Yes/No` please retry.").queue();
                     }
                 },
-                1, TimeUnit.MINUTES, () -> msg.delete().complete());
+                10, TimeUnit.SECONDS, () -> msg.delete().queue());
     }
 
     private void gameYes(Event event) {
         GenericGuildVoiceEvent gEvent = (GenericGuildVoiceEvent) event;
-        TextChannel textChannel;
-        textChannel = event.getJDA().getTextChannelById(Constant.getTextChannelConf().getProperty(gEvent.getGuild().getId()));
+        VoiceChannel gameVC = event.getJDA().getVoiceChannelById(Constant.getVoiceChannelConf().getProperty(gEvent.getGuild().getId()));
         if (Constant.gameList.containsKey(gEvent.getGuild().getId())) {
             if (Constant.gameList.get(gEvent.getGuild().getId()).isEmpty()) {
                 List<VoiceChannel> list = Collections.synchronizedList(new ArrayList<>());
                 VoiceChannel voiceChannel = (VoiceChannel) gEvent.getGuild().getController().createVoiceChannel(gEvent.getMember().getGame().getName()).complete();
                 gEvent.getGuild().getController().moveVoiceMember(gEvent.getMember(), voiceChannel).complete();
+                if (gameVC.getParent() != null) {
+                    voiceChannel.getManager().setParent(gameVC.getParent()).complete();
+                }
                 int oui = gEvent.getGuild().getVoiceChannels().indexOf(event.getJDA().getVoiceChannelById(Constant.getVoiceChannelConf().getProperty(gEvent.getGuild().getId())));
                 gEvent.getGuild().getController().modifyVoiceChannelPositions().selectPosition(voiceChannel).moveTo(oui + 1).complete();
                 list.add(voiceChannel);
@@ -109,6 +113,9 @@ public class WrkGame implements EventListener {
                     if (!gEvent.getGuild().getVoiceChannels().contains(voiceChannel)) {
                         voiceChannel = (VoiceChannel) gEvent.getGuild().getController().createVoiceChannel(gEvent.getMember().getGame().getName()).complete();
                         gEvent.getGuild().getController().moveVoiceMember(gEvent.getMember(), voiceChannel).complete();
+                        if (gameVC.getParent() != null) {
+                            voiceChannel.getManager().setParent(gameVC.getParent()).complete();
+                        }
                         int oui = gEvent.getGuild().getVoiceChannels().indexOf(event.getJDA().getVoiceChannelById(Constant.getVoiceChannelConf().getProperty(gEvent.getGuild().getId())));
                         gEvent.getGuild().getController().modifyVoiceChannelPositions().selectPosition(voiceChannel).moveTo(oui + 1).complete();
                         Constant.gameList.get(gEvent.getGuild().getId()).add(voiceChannel);
@@ -121,6 +128,9 @@ public class WrkGame implements EventListener {
             List<VoiceChannel> list = Collections.synchronizedList(new ArrayList<>());
             VoiceChannel voiceChannel = (VoiceChannel) gEvent.getGuild().getController().createVoiceChannel(gEvent.getMember().getGame().getName()).complete();
             gEvent.getGuild().getController().moveVoiceMember(gEvent.getMember(), voiceChannel).complete();
+            if (gameVC.getParent() != null) {
+                voiceChannel.getManager().setParent(gameVC.getParent()).complete();
+            }
             int oui = gEvent.getGuild().getVoiceChannels().indexOf(event.getJDA().getVoiceChannelById(Constant.getVoiceChannelConf().getProperty(gEvent.getGuild().getId())));
             gEvent.getGuild().getController().modifyVoiceChannelPositions().selectPosition(voiceChannel).moveTo(oui + 1).complete();
             list.add(voiceChannel);

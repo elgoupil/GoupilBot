@@ -10,12 +10,18 @@ import static bot.Constant.jda;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEvent;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
 import com.sedmelluq.discord.lavaplayer.player.event.TrackStartEvent;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioTrack;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioTrack;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import libs.YouTubeHelper;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -39,6 +45,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
     private Boolean isPlaying;
     private ArrayList<Color> colorList;
     private Iterator<Color> itColorList;
+    private String trackImgUrl;
 
     public NowPlaying(Guild server, Music music) {
         this.music = music;
@@ -56,6 +63,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         colorList.add(Color.CYAN);
         colorList.add(Color.BLUE);
         itColorList = colorList.iterator();
+        trackImgUrl = Constant.lambdaMusicIconUrl;
         run();
     }
 
@@ -116,12 +124,27 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         String position = getTimestamp(currentTrack.getPosition());
         String duration = getTimestamp(currentTrack.getDuration());
 
-        String msg = String.format("%s\n\n**Time:** [%s / %s]", title, position, duration);
+        String msg = String.format("[%s](%s)\n\n**Time:** \n[%s / %s]", title, currentTrack.getInfo().uri, position, duration);
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(server.getSelfMember().getColor());
         builder.setTitle("Playing:");
         builder.setDescription(msg);
-        builder.setColor(server.getSelfMember().getColor());
+        if (currentTrack instanceof YoutubeAudioTrack) {
+            String id = YouTubeHelper.extractVideoIdFromUrl(currentTrack.getInfo().uri);
+            trackImgUrl = String.format(Constant.youtubeThumbnailUrl, id);
+        } else if (currentTrack instanceof VimeoAudioTrack) {
+            trackImgUrl = Constant.vimeoIconUrl;
+        } else if (currentTrack instanceof TwitchStreamAudioTrack) {
+            trackImgUrl = Constant.twitchIconUrl;
+        } else if (currentTrack instanceof SoundCloudAudioTrack) {
+            trackImgUrl = Constant.soundcloudIconUrl;
+        } else if (currentTrack instanceof BandcampAudioTrack) {
+            trackImgUrl = Constant.bandcampIconUrl;
+        } else {
+            trackImgUrl = Constant.lambdaMusicIconUrl;
+        }
+        builder.setThumbnail(trackImgUrl);
+        builder.setFooter("Goupil Bot", server.getIconUrl());
         channel.getManager().setTopic("**Playing:** " + title).queue();
         Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
@@ -146,11 +169,13 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         String position = getTimestamp(currentTrack.getPosition());
         String duration = getTimestamp(currentTrack.getDuration());
 
-        String msg = String.format("%s\n\n**Time:** [%s / %s]", title, position, duration);
+        String msg = String.format("[%s](%s)\n\n**Time:** \n[%s / %s]", title, currentTrack.getInfo().uri, position, duration);
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(server.getSelfMember().getColor());
         builder.setTitle("Paused:");
         builder.setDescription(msg);
+        builder.setThumbnail(trackImgUrl);
+        builder.setFooter("Goupil Bot", server.getIconUrl());
         channel.getManager().setTopic("**Paused:** " + title).queue();
         Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
@@ -169,7 +194,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                 String title = currentTrack.getInfo().title;
                 String position = getTimestamp(currentTrack.getPosition());
                 String duration = getTimestamp(currentTrack.getDuration());
-                String msg = String.format("%s\n\n**Time:** \n[%s / %s]", title, position, duration);
+                String msg = String.format("[%s](%s)\n\n**Time:** \n[%s / %s]", title, currentTrack.getInfo().uri, position, duration);
                 EmbedBuilder builder = new EmbedBuilder();
                 if (itColorList.hasNext()) {
                     builder.setColor(itColorList.next());
@@ -179,6 +204,9 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                 }
                 builder.setTitle("Playing:");
                 builder.setDescription(msg);
+                builder.setThumbnail(trackImgUrl);
+                builder.setFooter("Goupil Bot", server.getIconUrl());
+
                 channel.getMessageById(idMessageNowPlaying).complete().editMessage(builder.build()).queue();
             } catch (Exception e) {
             }
@@ -215,6 +243,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
                             musicManager.scheduler.nextTrack();
+                            musicManager.player.setPaused(false);
                         }
                     } else {
                     }

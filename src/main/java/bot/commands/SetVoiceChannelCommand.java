@@ -19,9 +19,10 @@ public class SetVoiceChannelCommand extends Command {
     public SetVoiceChannelCommand() {
         this.name = "SetVoiceChannel";
         this.help = "set the voice channel for the server";
-        this.arguments = "id of the voice channel";
+        this.arguments = "[id of the voice channel]";
         this.guildOnly = true;
-        this.ownerCommand = true;
+        this.ownerCommand = false;
+        this.requiredRole = Constant.adminRole;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class SetVoiceChannelCommand extends Command {
             Constant.writeVoiceChannelConf(p);
             event.reactSuccess();
         } catch (Exception e) {
-            event.replyError("Please set a text channel first");
+            event.replyError("Please set a text channel first.\nSee `"+Constant.prefix+"help setTextChannel`");
         }
     }
 }
