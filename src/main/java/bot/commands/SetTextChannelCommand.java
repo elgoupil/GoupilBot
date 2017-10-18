@@ -17,7 +17,7 @@ import java.util.Properties;
 public class SetTextChannelCommand extends Command {
 
     public SetTextChannelCommand() {
-        this.name = "setTextChannel";
+        this.name = "settextchannel";
         this.help = "set the text channel for the server";
         this.guildOnly = true;
         this.ownerCommand = false;

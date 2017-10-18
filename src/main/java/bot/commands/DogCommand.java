@@ -22,11 +22,11 @@ import net.dv8tion.jda.core.entities.ChannelType;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class CatCommand extends Command {
+public class DogCommand extends Command {
 
-    public CatCommand() {
-        this.name = "cat";
-        this.help = "shows a random cat";
+    public DogCommand() {
+        this.name = "dog";
+        this.help = "shows a random dog";
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
         this.guildOnly = false;
     }
@@ -42,14 +42,14 @@ public class CatCommand extends Command {
             }
         }
         // use Unirest to poll an API
-        Unirest.get("http://random.cat/meow").asJsonAsync(new Callback<JsonNode>() {
+        Unirest.get("https://random.dog/woof.json").asJsonAsync(new Callback<JsonNode>() {
 
             // The API call was successful
             @Override
             public void completed(HttpResponse<JsonNode> hr) {
                 event.reply(new EmbedBuilder()
                         .setColor(event.isFromType(ChannelType.TEXT) ? event.getSelfMember().getColor() : Color.GREEN)
-                        .setImage(hr.getBody().getObject().getString("file"))
+                        .setImage(hr.getBody().getObject().getString("url"))
                         .build());
             }
 

@@ -8,6 +8,7 @@ package bot.commands.music;
 import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
 
 /**
  *
@@ -16,7 +17,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 public class NowPlayingCommand extends Command {
 
     public NowPlayingCommand() {
-        this.name = "nowPlaying";
+        this.name = "nowplaying";
         this.aliases = new String[]{"np"};
         this.help = "show the current playing track";
         this.guildOnly = true;
@@ -25,13 +26,14 @@ public class NowPlayingCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
-        if (id != null) {
-            if (!event.getChannel().getId().equals(id)) {
-                return;
+        if (event.isFromType(ChannelType.TEXT)) {
+            String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
+            if (id != null) {
+                if (!event.getChannel().getId().equals(id)) {
+                    return;
+                }
             }
         }
-
         if (event.getGuild().getAudioManager().isConnected()) {
             if (Constant.music.getGuildAudioPlayer(event.getGuild()).player.getPlayingTrack() != null) {
                 Constant.nowPlayingList.get(event.getGuild().getId()).resendNowPlaying();

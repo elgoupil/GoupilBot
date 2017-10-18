@@ -5,9 +5,6 @@
  */
 package bot.commands;
 
-import bot.Constant;
-import bot.wrk.music.GuildMusicManager;
-import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.waiter.EventWaiter;

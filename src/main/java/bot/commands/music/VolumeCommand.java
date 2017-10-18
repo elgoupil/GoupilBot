@@ -8,6 +8,7 @@ package bot.commands.music;
 import bot.Constant;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
 
 /**
  *
@@ -25,10 +26,12 @@ public class VolumeCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
-        if (id != null) {
-            if (!event.getChannel().getId().equals(id)) {
-                return;
+        if (event.isFromType(ChannelType.TEXT)) {
+            String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
+            if (id != null) {
+                if (!event.getChannel().getId().equals(id)) {
+                    return;
+                }
             }
         }
         if (event.getGuild().getAudioManager().isConnected()) {

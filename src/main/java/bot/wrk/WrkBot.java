@@ -8,9 +8,9 @@ package bot.wrk;
 import bot.Constant;
 import bot.commands.BroadcastCommand;
 import bot.commands.CatCommand;
+import bot.commands.DogCommand;
+import bot.commands.GameBotCommand;
 import bot.commands.HelloCommand;
-import bot.commands.LambdaCommand;
-import bot.commands.LambdaCommandV2;
 import bot.commands.RestartCommand;
 import bot.commands.SetTextChannelCommand;
 import bot.commands.SetVoiceChannelCommand;
@@ -22,6 +22,7 @@ import bot.commands.music.SearchCommand;
 import bot.commands.music.ShuffleCommand;
 import bot.commands.music.SummonCommand;
 import bot.commands.music.VolumeCommand;
+import bot.commands.SetAvatarCommand;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 import com.jagrosh.jdautilities.commandclient.examples.AboutCommand;
@@ -45,6 +46,7 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
  * @author renardn
  */
 public class WrkBot {
+
     EventWaiter waiter;
     WrkGame wrkGame;
     CommandClientBuilder client;
@@ -59,31 +61,30 @@ public class WrkBot {
         client.setEmojis("✅", "⚠", "❌");
         client.setPrefix(Constant.prefix);
         // adds commands
-        client.addCommands(
-                // command to show information about the bot
+        client.addCommands(// command to show information about the bot
                 new AboutCommand(Color.GREEN, "a music bot with a lot more",
-                        new String[]{"Cool commands", "Nice cats", "Lots of dicks!", "A mean Potch"},
+                        new String[]{"Pimped music bot", "Many cats", "Many dogs", "Game bot (see the help)", "And more..."},
                         new Permission[]{Permission.MANAGE_CHANNEL, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_MANAGE, Permission.MESSAGE_ADD_REACTION, Permission.VOICE_MOVE_OTHERS, Permission.VOICE_SPEAK}),
-                new GuildlistCommand(waiter),
-                new PingCommand(),
-                new RestartCommand(),
                 new BroadcastCommand(),
                 new CatCommand(),
-                new LambdaCommand(),
-                new LambdaCommandV2(),
-                new SetTextChannelCommand(),
-                new SummonCommand(),
                 new DisconnectCommand(),
-                new PlayCommand(),
-                new QueueCommand(),
-                new SearchCommand(waiter),
-                new VolumeCommand(),
+                new DogCommand(),
+                new GameBotCommand(),
+                new GuildlistCommand(waiter),
                 new HelloCommand(waiter),
                 new NowPlayingCommand(),
-                new ShuffleCommand(),
+                new PingCommand(),
+                new PlayCommand(),
+                new QueueCommand(),
+                new RestartCommand(),
+                new SearchCommand(waiter),
+                new SetAvatarCommand(),
+                new SetTextChannelCommand(),
                 new SetVoiceChannelCommand(),
-                new bot.commands.ShutdownCommand());
-
+                new ShuffleCommand(),
+                new bot.commands.ShutdownCommand(),
+                new SummonCommand(),
+                new VolumeCommand());
         try {
             Constant.jda = new JDABuilder(AccountType.BOT)
                     // set the token

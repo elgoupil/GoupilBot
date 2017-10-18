@@ -20,6 +20,7 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.EventListener;
 
 /**
@@ -75,22 +76,19 @@ public class WrkGame implements EventListener {
         GenericGuildVoiceEvent gEvent = (GenericGuildVoiceEvent) event;
         TextChannel textChannel;
         textChannel = event.getJDA().getTextChannelById(Constant.getTextChannelConf().getProperty(gEvent.getGuild().getId()));
-        Message msg = textChannel.sendMessage(" Hi " + gEvent.getMember().getAsMention() + ", wanna be moved in your game's Channel?\nAnswer `Yes/No`").complete();
-        Constant.waiter.waitForEvent(GuildMessageReceivedEvent.class,
-                e -> e.getMember().equals(gEvent.getMember()) && e.getChannel().equals(textChannel),
+        Message msg = textChannel.sendMessage(" Hi " + gEvent.getMember().getAsMention() + ", wanna be moved in your game's Channel?\nReact:").complete();
+        msg.addReaction("🆗").queue();
+        msg.addReaction("❌").queue();
+        Constant.waiter.waitForEvent(MessageReactionAddEvent.class,
+                e -> e.getMessageId().equals(msg.getId()) && e.getChannel().equals(textChannel) && e.getMember().equals(gEvent.getMember()),
                 e -> {
-                    if (e.getMessage().getContent().equalsIgnoreCase("Yes") || e.getMessage().getContent().equalsIgnoreCase("y")) {
+                    if (e.getReaction().getEmote().getName().equals("🆗")) {
                         msg.delete().queue();
-                        e.getMessage().delete().queue();
                         gameYes(event);
-                    } else if (e.getMessage().getContent().equalsIgnoreCase("No") || e.getMessage().getContent().equalsIgnoreCase("n")) {
+                    } else if (e.getReaction().getEmote().getName().equals("❌")) {
                         msg.delete().queue();
-                        e.getMessage().delete().queue();
-                    } else {
-                        textChannel.sendMessage(gEvent.getMember().getAsMention() + " `Yes/No` please retry.").queue();
                     }
-                },
-                10, TimeUnit.SECONDS, () -> msg.delete().queue());
+                }, 10, TimeUnit.SECONDS, () -> msg.delete().queue());
     }
 
     private void gameYes(Event event) {

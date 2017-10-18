@@ -17,7 +17,7 @@ import java.util.Properties;
 public class SetVoiceChannelCommand extends Command {
 
     public SetVoiceChannelCommand() {
-        this.name = "SetVoiceChannel";
+        this.name = "setvoicechannel";
         this.help = "set the voice channel for the server";
         this.arguments = "[id of the voice channel]";
         this.guildOnly = true;

@@ -144,7 +144,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
             trackImgUrl = Constant.lambdaMusicIconUrl;
         }
         builder.setThumbnail(trackImgUrl);
-        builder.setFooter(Constant.jda.getSelfUser().getName(), server.getIconUrl());
+        builder.setFooter(server.getSelfMember().getNickname() != null ? server.getSelfMember().getNickname() : server.getSelfMember().getEffectiveName(), server.getIconUrl());
         channel.getManager().setTopic("**Playing:** " + title).queue();
         Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
@@ -175,7 +175,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         builder.setTitle("Paused:");
         builder.setDescription(msg);
         builder.setThumbnail(trackImgUrl);
-        builder.setFooter(Constant.jda.getSelfUser().getName(), server.getIconUrl());
+        builder.setFooter(server.getSelfMember().getNickname() != null ? server.getSelfMember().getNickname() : server.getSelfMember().getEffectiveName(), server.getIconUrl());
         channel.getManager().setTopic("**Paused:** " + title).queue();
         Message theMessage = channel.sendMessage(builder.build()).complete();
         idMessageNowPlaying = theMessage.getId();
@@ -205,8 +205,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                 builder.setTitle("Playing:");
                 builder.setDescription(msg);
                 builder.setThumbnail(trackImgUrl);
-                builder.setFooter(Constant.jda.getSelfUser().getName(), server.getIconUrl());
-
+                builder.setFooter(server.getSelfMember().getNickname() != null ? server.getSelfMember().getNickname() : server.getSelfMember().getEffectiveName(), server.getIconUrl());
                 channel.getMessageById(idMessageNowPlaying).complete().editMessage(builder.build()).queue();
             } catch (Exception e) {
             }
@@ -240,6 +239,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(1))) {
                             musicManager.scheduler.clearQueue();
                             musicManager.player.stopTrack();
+                            musicManager.player.setPaused(false);
                         }
                         if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
                             musicManager.scheduler.nextTrack();

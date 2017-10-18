@@ -12,6 +12,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.ArrayList;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 
 /**
  *
@@ -28,10 +29,12 @@ public class QueueCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
-        if (id != null) {
-            if (!event.getChannel().getId().equals(id)) {
-                return;
+        if (event.isFromType(ChannelType.TEXT)) {
+            String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
+            if (id != null) {
+                if (!event.getChannel().getId().equals(id)) {
+                    return;
+                }
             }
         }
         if (event.getGuild().getAudioManager().isConnected()) {
@@ -58,7 +61,7 @@ public class QueueCommand extends Command {
                         message += "\n" + (i + 2) + ".`" + queue.get(i).getInfo().title + "`";
                     }
                     builder.setDescription(message);
-                    builder.setFooter("Goupil Bot", event.getGuild().getIconUrl());
+                    builder.setFooter(event.getSelfMember().getNickname() != null ? event.getSelfMember().getNickname() : event.getSelfMember().getEffectiveName(), event.getGuild().getIconUrl());
                     event.reply(builder.build());
                 }
             }

@@ -17,8 +17,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
  */
 public class ShutdownCommand extends Command {
 
-    public ShutdownCommand()
-    {
+    public ShutdownCommand() {
         this.name = "shutdown";
         this.aliases = new String[]{"sd"};
         this.help = "safely shuts off the bot";
@@ -40,5 +39,5 @@ public class ShutdownCommand extends Command {
         event.getJDA().shutdown();
         System.exit(0);
     }
-    
+
 }

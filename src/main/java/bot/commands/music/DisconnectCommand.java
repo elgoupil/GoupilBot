@@ -9,6 +9,7 @@ import bot.Constant;
 import bot.wrk.music.Music;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
 
 /**
  *
@@ -25,10 +26,12 @@ public class DisconnectCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
-        if (id != null) {
-            if (!event.getChannel().getId().equals(id)) {
-                return;
+        if (event.isFromType(ChannelType.TEXT)) {
+            String id = Constant.getTextChannelConf().getProperty(event.getGuild().getId());
+            if (id != null) {
+                if (!event.getChannel().getId().equals(id)) {
+                    return;
+                }
             }
         }
         int res = Constant.music.disconnectFromVoiceChat(event.getGuild().getAudioManager());

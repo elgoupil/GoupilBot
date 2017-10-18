@@ -265,6 +265,8 @@ public class Music {
     public int disconnectFromVoiceChat(AudioManager manager) {
         int res = 0;
         if (manager.isConnected()) {
+            getGuildAudioPlayer(manager.getGuild()).player.stopTrack();
+            getGuildAudioPlayer(manager.getGuild()).scheduler.clearQueue();
             manager.closeAudioConnection();
             res = 1;
         }

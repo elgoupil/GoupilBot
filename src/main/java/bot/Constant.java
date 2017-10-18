@@ -52,6 +52,8 @@ public class Constant {
     public static String ownerId = getConf().getProperty("ownerId");
         
     public static String adminRole = getConf().getProperty("adminRole");
+    
+    public static String gameBotExampleUrl = "https://thumbs.gfycat.com/EasygoingImpressiveHake-size_restricted.gif";
 
     public static void writeTextChannelConf(Properties p) {
         Conf.writeConf(p, "textChannels.properties");
