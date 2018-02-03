@@ -10,6 +10,7 @@ import bot.commands.BroadcastCommand;
 import bot.commands.CatCommand;
 import bot.commands.DogCommand;
 import bot.commands.GameBotCommand;
+import bot.commands.GetStatusCommand;
 import bot.commands.HelloCommand;
 import bot.commands.RestartCommand;
 import bot.commands.SetTextChannelCommand;
@@ -68,6 +69,7 @@ public class WrkBot {
                 new DisconnectCommand(),
                 new DogCommand(),
                 new GameBotCommand(),
+                new GetStatusCommand(),
                 new GuildlistCommand(waiter),
                 new HelloCommand(waiter),
                 new NowPlayingCommand(),
