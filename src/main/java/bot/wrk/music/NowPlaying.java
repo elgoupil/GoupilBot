@@ -221,10 +221,10 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         if (event instanceof MessageReactionAddEvent) {
             if (!((MessageReactionAddEvent) event).getUser().equals(jda.getSelfUser())) {
                 if (!idMessageNowPlaying.isEmpty() && ((MessageReactionAddEvent) event).getMessageId().equals(idMessageNowPlaying)) {
-                    if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))
-                            || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(1))
-                            || ((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
-                        if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(0))) {
+                    if (((MessageReactionAddEvent) event).getReaction().getReactionEmote().getName().equals(reactions.get(0))
+                            || ((MessageReactionAddEvent) event).getReaction().getReactionEmote().getName().equals(reactions.get(1))
+                            || ((MessageReactionAddEvent) event).getReaction().getReactionEmote().getName().equals(reactions.get(2))) {
+                        if (((MessageReactionAddEvent) event).getReaction().getReactionEmote().getName().equals(reactions.get(0))) {
                             if (musicManager.player.isPaused()) {
                                 musicManager.player.setPaused(false);
                                 channel.getManager().setTopic("").queue();
@@ -236,12 +236,12 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                                 musicManager.player.setPaused(true);
                             }
                         }
-                        if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(1))) {
+                        if (((MessageReactionAddEvent) event).getReaction().getReactionEmote().getName().equals(reactions.get(1))) {
                             musicManager.scheduler.clearQueue();
                             musicManager.player.stopTrack();
                             musicManager.player.setPaused(false);
                         }
-                        if (((MessageReactionAddEvent) event).getReaction().getEmote().getName().equals(reactions.get(2))) {
+                        if (((MessageReactionAddEvent) event).getReaction().getReactionEmote().getName().equals(reactions.get(2))) {
                             musicManager.scheduler.nextTrack();
                             musicManager.player.setPaused(false);
                         }

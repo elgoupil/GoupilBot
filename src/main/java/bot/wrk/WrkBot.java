@@ -39,7 +39,6 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 /**
  *
@@ -56,7 +55,6 @@ public class WrkBot {
         Constant.waiter = waiter = new EventWaiter();
         wrkGame = new WrkGame();
         client = new CommandClientBuilder();
-        client.useDefaultGame();
         client.setOwnerId(Constant.ownerId);
         client.setEmojis("✅", "⚠", "❌");
         client.setPrefix(Constant.prefix);
@@ -91,14 +89,14 @@ public class WrkBot {
                     .setToken(prop.getProperty("token"))
                     // set the game for when the bot is loading
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
-                    .setGame(Game.of("loading..."))
+                    .setGame(Game.playing("loading..."))
                     // add the listeners
                     .addEventListener(waiter)
                     .addEventListener(client.build())
                     .addEventListener(wrkGame)
                     // start it up!
                     .buildAsync();
-        } catch (LoginException | IllegalArgumentException | RateLimitedException ex) {
+        } catch (LoginException | IllegalArgumentException ex) {
             Logger.getLogger(WrkBot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

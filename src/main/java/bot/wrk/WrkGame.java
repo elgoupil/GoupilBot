@@ -19,7 +19,6 @@ import net.dv8tion.jda.core.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.EventListener;
 
@@ -82,10 +81,10 @@ public class WrkGame implements EventListener {
         Constant.waiter.waitForEvent(MessageReactionAddEvent.class,
                 e -> e.getMessageId().equals(msg.getId()) && e.getChannel().equals(textChannel) && e.getMember().equals(gEvent.getMember()),
                 e -> {
-                    if (e.getReaction().getEmote().getName().equals("🆗")) {
+                    if (e.getReaction().getReactionEmote().getName().equals("🆗")) {
                         msg.delete().queue();
                         gameYes(event);
-                    } else if (e.getReaction().getEmote().getName().equals("❌")) {
+                    } else if (e.getReaction().getReactionEmote().getName().equals("❌")) {
                         msg.delete().queue();
                     }
                 }, 10, TimeUnit.SECONDS, () -> msg.delete().queue());

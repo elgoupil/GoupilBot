@@ -35,7 +35,7 @@ public class HelloCommand extends Command {
                 // make sure it's by the same user, and in the same channel
                 e -> e.getAuthor().equals(event.getAuthor()) && e.getChannel().equals(event.getChannel()),
                 // respond, inserting the name they listed into the response
-                e -> e.getChannel().sendMessage("Hello, `" + e.getMessage().getRawContent() + "`! I'm `" + e.getJDA().getSelfUser().getName() + "`!").queue(),
+                e -> e.getChannel().sendMessage("Hello, `" + e.getMessage().getContentDisplay() + "`! I'm `" + e.getJDA().getSelfUser().getName() + "`!").queue(),
                 // if the user takes more than a minute, time out
                 1, TimeUnit.MINUTES, () -> event.reply("Sorry, you took too long."));
     }

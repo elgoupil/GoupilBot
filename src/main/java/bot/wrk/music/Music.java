@@ -152,38 +152,38 @@ public class Music {
                                 reactions.add("3⃣");
                                 reactions.add("4⃣");
                                 reactions.add("✅"); //All
-                                if ((e).getReaction().getEmote().getName().equals(reactions.get(0))
-                                        || (e).getReaction().getEmote().getName().equals(reactions.get(1))
-                                        || (e).getReaction().getEmote().getName().equals(reactions.get(2))
-                                        || (e).getReaction().getEmote().getName().equals(reactions.get(3))
-                                        || (e).getReaction().getEmote().getName().equals(reactions.get(4))
-                                        || (e).getReaction().getEmote().getName().equals(reactions.get(5))) {
+                                if ((e).getReaction().getReactionEmote().getName().equals(reactions.get(0))
+                                        || (e).getReaction().getReactionEmote().getName().equals(reactions.get(1))
+                                        || (e).getReaction().getReactionEmote().getName().equals(reactions.get(2))
+                                        || (e).getReaction().getReactionEmote().getName().equals(reactions.get(3))
+                                        || (e).getReaction().getReactionEmote().getName().equals(reactions.get(4))
+                                        || (e).getReaction().getReactionEmote().getName().equals(reactions.get(5))) {
                                     GuildMusicManager musicManager = getGuildAudioPlayer(event.getGuild());
-                                    if ((e).getReaction().getEmote().getName().equals(reactions.get(0))) {
+                                    if ((e).getReaction().getReactionEmote().getName().equals(reactions.get(0))) {
                                         event.getChannel().deleteMessageById(idMessageNowPlaying).queue();
                                         event.getChannel().sendMessage("Canceled search").queue();
                                     }
-                                    if ((e).getReaction().getEmote().getName().equals(reactions.get(1))) {
+                                    if ((e).getReaction().getReactionEmote().getName().equals(reactions.get(1))) {
                                         play(event.getGuild(), tracks.get(0));
                                         event.getChannel().sendMessage("Added to queue " + tracks.get(0).getInfo().title).queue();
                                         event.getChannel().deleteMessageById(idMessageNowPlaying).queue();
                                     }
-                                    if ((e).getReaction().getEmote().getName().equals(reactions.get(2))) {
+                                    if ((e).getReaction().getReactionEmote().getName().equals(reactions.get(2))) {
                                         play(event.getGuild(), tracks.get(1));
                                         event.getChannel().sendMessage("Added to queue " + tracks.get(1).getInfo().title).queue();
                                         event.getChannel().deleteMessageById(idMessageNowPlaying).queue();
                                     }
-                                    if ((e).getReaction().getEmote().getName().equals(reactions.get(3))) {
+                                    if ((e).getReaction().getReactionEmote().getName().equals(reactions.get(3))) {
                                         play(event.getGuild(), tracks.get(2));
                                         event.getChannel().sendMessage("Added to queue " + tracks.get(2).getInfo().title).queue();
                                         event.getChannel().deleteMessageById(idMessageNowPlaying).queue();
                                     }
-                                    if ((e).getReaction().getEmote().getName().equals(reactions.get(4))) {
+                                    if ((e).getReaction().getReactionEmote().getName().equals(reactions.get(4))) {
                                         play(event.getGuild(), tracks.get(3));
                                         event.getChannel().sendMessage("Added to queue " + tracks.get(3).getInfo().title).queue();
                                         event.getChannel().deleteMessageById(idMessageNowPlaying).queue();
                                     }
-                                    if ((e).getReaction().getEmote().getName().equals(reactions.get(5))) {
+                                    if ((e).getReaction().getReactionEmote().getName().equals(reactions.get(5))) {
                                         for (AudioTrack track : tracks) {
                                             play(event.getGuild(), track);
                                         }
