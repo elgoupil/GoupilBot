@@ -10,8 +10,8 @@ import bot.Constant;
 import bot.wrk.WrkBot;
 import bot.wrk.music.GuildMusicManager;
 import bot.wrk.music.NowPlaying;
-import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Properties;
 
 /**

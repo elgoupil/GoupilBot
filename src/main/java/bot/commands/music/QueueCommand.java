@@ -7,8 +7,8 @@ package bot.commands.music;
 
 import bot.Constant;
 import bot.wrk.music.GuildMusicManager;
-import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import java.util.ArrayList;
 import net.dv8tion.jda.core.EmbedBuilder;

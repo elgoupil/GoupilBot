@@ -6,14 +6,11 @@
 package bot.commands;
 
 import bot.Constant;
-import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.dv8tion.jda.core.entities.Icon;
-import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 
 /**
  *

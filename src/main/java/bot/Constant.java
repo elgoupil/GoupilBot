@@ -8,7 +8,7 @@ package bot;
 import bot.wrk.WrkBot;
 import bot.wrk.music.Music;
 import bot.wrk.music.NowPlaying;
-import com.jagrosh.jdautilities.waiter.EventWaiter;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
