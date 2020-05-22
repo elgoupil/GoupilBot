@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
 /**
  *

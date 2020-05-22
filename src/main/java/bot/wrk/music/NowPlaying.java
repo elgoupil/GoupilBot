@@ -22,13 +22,13 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import libs.YouTubeHelper;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.hooks.EventListener;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
 
 /**
  *
@@ -62,6 +62,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
         colorList.add(Color.GREEN);
         colorList.add(Color.CYAN);
         colorList.add(Color.BLUE);
+        colorList.add(Color.MAGENTA);
         itColorList = colorList.iterator();
         trackImgUrl = Constant.lambdaMusicIconUrl;
         run();
@@ -153,6 +154,7 @@ public final class NowPlaying implements EventListener, AudioEventListener {
             channel.addReactionById(idMessageNowPlaying, "⏯").complete(true);
             channel.addReactionById(idMessageNowPlaying, "⏭").submit();
         } catch (Exception e) {
+            System.out.println("help");
         }
     }
 
@@ -206,14 +208,14 @@ public final class NowPlaying implements EventListener, AudioEventListener {
                 builder.setDescription(msg);
                 builder.setThumbnail(trackImgUrl);
                 builder.setFooter(server.getSelfMember().getNickname() != null ? server.getSelfMember().getNickname() : server.getSelfMember().getEffectiveName(), server.getIconUrl());
-                channel.getMessageById(idMessageNowPlaying).complete().editMessage(builder.build()).queue();
+                channel.editMessageById(idMessageNowPlaying, builder.build()).queue();
             } catch (Exception e) {
             }
         }
     }
 
     @Override
-    public void onEvent(Event event) {
+    public void onEvent(GenericEvent event) {
         ArrayList<String> reactions = new ArrayList<>();
         reactions.add("⏯");
         reactions.add("⏹");

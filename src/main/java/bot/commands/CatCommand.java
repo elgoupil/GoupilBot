@@ -14,9 +14,9 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import java.awt.Color;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.ChannelType;
 
 /**
  *
@@ -42,7 +42,7 @@ public class CatCommand extends Command {
             }
         }
         // use Unirest to poll an API
-        Unirest.get("http://random.cat/meow").asJsonAsync(new Callback<JsonNode>() {
+        Unirest.get("http://aws.random.cat/meow").asJsonAsync(new Callback<JsonNode>() {
 
             // The API call was successful
             @Override

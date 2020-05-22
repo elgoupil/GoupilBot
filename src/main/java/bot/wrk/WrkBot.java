@@ -10,7 +10,6 @@ import bot.commands.BroadcastCommand;
 import bot.commands.CatCommand;
 import bot.commands.DogCommand;
 import bot.commands.GameBotCommand;
-import bot.commands.GetStatusCommand;
 import bot.commands.HelloCommand;
 import bot.commands.RestartCommand;
 import bot.commands.SetTextChannelCommand;
@@ -35,11 +34,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Activity;
 
 /**
  *
@@ -48,13 +47,11 @@ import net.dv8tion.jda.core.entities.Game;
 public class WrkBot {
 
     EventWaiter waiter;
-    WrkGame wrkGame;
     CommandClientBuilder client;
 
     public WrkBot(Properties prop) {
         Constant.music = new Music();
         Constant.waiter = waiter = new EventWaiter();
-        wrkGame = new WrkGame();
         client = new CommandClientBuilder();
         client.setOwnerId(Constant.ownerId);
         client.setEmojis("✅", "⚠", "❌");
@@ -69,7 +66,6 @@ public class WrkBot {
                 new DisconnectCommand(),
                 new DogCommand(),
                 new GameBotCommand(),
-                new GetStatusCommand(),
                 new GuildlistCommand(waiter),
                 new HelloCommand(waiter),
                 new NowPlayingCommand(),
@@ -91,13 +87,11 @@ public class WrkBot {
                     .setToken(prop.getProperty("token"))
                     // set the game for when the bot is loading
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
-                    .setGame(Game.playing("loading..."))
+                    .setActivity(Activity.playing("loading..."))
                     // add the listeners
-                    .addEventListener(waiter)
-                    .addEventListener(client.build())
-                    .addEventListener(wrkGame)
+                    .addEventListeners(waiter, client.build())
                     // start it up!
-                    .buildAsync();
+                    .build();
         } catch (LoginException | IllegalArgumentException ex) {
             Logger.getLogger(WrkBot.class.getName()).log(Level.SEVERE, null, ex);
         }

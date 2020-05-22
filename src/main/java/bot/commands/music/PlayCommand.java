@@ -9,7 +9,7 @@ import bot.Constant;
 import bot.wrk.music.NowPlaying;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 
 /**
  *
@@ -36,11 +36,15 @@ public class PlayCommand extends Command {
                 }
             }
         }
+        System.out.println("1");
         if (event.getGuild().getAudioManager().isConnected()) {
             if (!event.getArgs().isEmpty()) {
+                System.out.println("2");
                 Constant.music.loadAndPlay(event);
                 if (id != null) {
+                    System.out.println("3");
                     if (!Constant.nowPlayingList.containsKey(event.getGuild().getId())) {
+                        System.out.println("4");
                         new NowPlaying(event.getGuild(), Constant.music);
                     }
                 }
